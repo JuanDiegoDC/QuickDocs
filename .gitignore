@@ -47,3 +47,5 @@ node_modules
 out
 .eslintcache
 env.sh
+
+package-lock.json
