@@ -4,6 +4,7 @@ var path = require("path");
 var io = require('socket.io')(server);
 import mongoose from "mongoose";
 import User from "./User.js";
+import Document from "./Document.js";
 import bodyParser from "body-parser";
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
@@ -31,7 +32,6 @@ passport.use(new LocalStrategy(
         return done(null, false, { message: 'Incorrect username.' });
       }
       bcrypt.compare(password, user.password).then(function(res) {
-        console.log(res);
           if (res) {
             return done(null, user);
           }
@@ -98,11 +98,13 @@ app.get("/ping", (req, res) => {
 
 app.get("/logout", (req, res) => {
   req.logout();
+  res.json({
+    success: true
+  });
 });
 
 app.post('/login',
   passport.authenticate('local'), (req, res) => {
-    console.log("Request received");
   if (req.user) {
     console.log(req.user);
     res.json({
