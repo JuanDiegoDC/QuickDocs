@@ -1,9 +1,14 @@
 import React from 'react';
 import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
+<<<<<<< HEAD
 import { AppBar, Button, TextField, Card, CardHeader, Divider, Tabs, Tab } from '@material-ui/core';
 import createMuiTheme from './theme';
 import axios from "axios";
 const url = "http://localhost:8080";
+=======
+import { AppBar, Button, TextField, Card, CardHeader, Divider, Tabs, Tab, Typography } from '@material-ui/core';
+import createMuiTheme from './theme'
+>>>>>>> 5c518e270f21d0313ebe04a647c6813e00ab0bdd
 
 export default class LoginForm extends React.Component {
 constructor(props){
@@ -48,16 +53,12 @@ render() {
     return (
       <div className="form-group" >
         <MuiThemeProvider theme={createMuiTheme}>
-          <Card color="blue" className="container" align="center" style={{marginTop: '80px', width: "400px", height:"400px", padding: "40px"}}>
+          <Card color="blue" className="container" align="center" style={{marginTop: '80px', width: "400px", height:"350px", padding: "40px"}}>
             <AppBar position="static">
-              <Tabs >
-                <Tab label="LOGIN" />
-              </Tabs>
+              <Typography variant="title" color="inherit" style={{padding: '20px'}}>
+                LOGIN
+              </Typography>
             </AppBar>
-
-            <CardHeader
-            title="LOGIN"
-            />
             <Divider />
           <div style={{margin: '20px'}}>
             <div >
@@ -80,8 +81,13 @@ render() {
                <br/>
              <Divider />
             <div >
+<<<<<<< HEAD
                <Button style={{margin: 15}} onClick={(event) => this.login(event)}>SUBMIT</Button>
                <Button style={{margin: 15}} onClick={(event) => this.handleClick(event)}>REGISTER</Button>
+=======
+               <Button color="primary" style={{margin: 15}} onClick={(event) => this.handleClick(event)}>SUBMIT</Button>
+               <Button color="primary" style={{margin: 15}} onClick={(event) => this.handleClick(event)}>REGISTER</Button>
+>>>>>>> 5c518e270f21d0313ebe04a647c6813e00ab0bdd
             </div>
          </div>
        </Card>
