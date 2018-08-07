@@ -44,6 +44,7 @@ constructor(props){
     console.log(err);
   })
  }
+
 render() {
     return (
       <div className="form-group" >
@@ -77,7 +78,7 @@ render() {
              <Divider />
             <div >
                <Button color="primary" style={{margin: 15}} onClick={(event) => this.login(event)}>SUBMIT</Button>
-               <Button color="primary" style={{margin: 15}} onClick={(event) => this.handleClick(event)}>REGISTER</Button>
+               <Button color="primary" style={{margin: 15}} onClick={(event) => this.props.register(event)}>REGISTER</Button>
             </div>
          </div>
        </Card>
