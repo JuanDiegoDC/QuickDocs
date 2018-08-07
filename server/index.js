@@ -26,6 +26,7 @@ mongoose.connect(process.env.MONGODB_URI, {useNewUrlParser: true}, (error) => {
 // set passport middleware to first try local strategy
 passport.use(new LocalStrategy(
   function(username, password, done) {
+    console.log("Called!");
     User.findOne({ username: username }, function (err, user) {
       if (err) { return done(err); }
       if (!user) {
@@ -92,24 +93,39 @@ app.post("/register", (req, res) => {
   }
 });
 
+app.post("/ping", (req, res) => {
+  res.send("Pong!");
+})
+
 app.get("/ping", (req, res) => {
   res.send("Pong!");
 });
 
 app.post('/login',
-  passport.authenticate('local'), (req, res) => {
-  if (req.user) {
-    console.log(req.user);
-    res.json({
-      success: true
+function(req, res, next) {
+  console.log('before authenticate');
+  passport.authenticate('local', function(err, user, info) {
+    console.log('authenticate callback', user);
+    if (err) { return next(err);}
+    if (!user) {
+      return res.json({
+        error: "No user in database"
+      });
+    }
+    req.logIn(user, function(err) {
+      if (err) {
+        return res.json({
+          error: err
+        });
+      }
+      else {
+        res.json({
+          success: true
+        });
+      }
     });
-  }
-  else {
-    res.json({
-      error: "Invalid credentials"
-    })
-  }
-  });
+  })(req, res, next);
+});
 
   app.use("/", (req, res, next) => {
     if (req.user) {
@@ -134,7 +150,12 @@ app.post('/login',
   app.get("/documents", (req, res) => {
     let docs = [];
     Document.find({collaborator: req.user._id}, (error, docs) => {
-      console.log(docs);
+      if (error){
+        console.log(error);
+      }
+      res.json({
+        docs: docs
+      });
     });
   });
 
