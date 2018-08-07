@@ -96,13 +96,6 @@ app.get("/ping", (req, res) => {
   res.send("Pong!");
 });
 
-app.get("/logout", (req, res) => {
-  req.logout();
-  res.json({
-    success: true
-  });
-});
-
 app.post('/login',
   passport.authenticate('local'), (req, res) => {
   if (req.user) {
@@ -116,6 +109,33 @@ app.post('/login',
       error: "Invalid credentials"
     })
   }
+  });
+
+  app.use("/", (req, res, next) => {
+    if (req.user) {
+      return next();
+    }
+    else {
+      res.json({
+        error: "Unauthorized"
+      });
+    }
+  });
+
+  //EVERYTHING BELOW HERE MUST BE AUTHORIZED
+
+  app.get("/logout", (req, res) => {
+    req.logout();
+    res.json({
+      success: true
+    });
+  });
+
+  app.get("/documents", (req, res) => {
+    let docs = [];
+    Document.find({collaborator: req.user._id}, (error, docs) => {
+      console.log(docs);
+    });
   });
 
 io.on('connection', function (socket) {

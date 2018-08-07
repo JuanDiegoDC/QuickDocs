@@ -87,6 +87,7 @@ export default class App extends React.Component {
       showColorPicker: false
     });
     console.log(this.state.editorColor);
+    console.log(this.state.editorState);
   }
 
   toggleAlignment(e){
