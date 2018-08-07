@@ -9,31 +9,6 @@ import SizeMenu from "./components/SizeMenu.js";
 import AlignMenu from "./components/AlignMenu.js";
 import createStyles from 'draft-js-custom-styles';
 
-const customStyleMap = {
-  "size12": {
-    fontSize: 12
-  },
-  "size14": {
-    fontSize: 14
-  },
-  "size16": {
-    fontSize: 16
-  },
-  "size18": {
-    fontSize: 18
-  },
-  "size24": {
-    fontSize: 24
-  },
-  "size32": {
-    fontSize: 32
-  },
-  "size48": {
-    fontSize: 48
-  },
-}
-const { styles, customStyleFn, exporter } = createStyles(['font-size', 'color'], 'PREFIX', customStyleMap);
-
 export default class App extends React.Component {
   constructor(props) {
     super(props);
@@ -41,10 +16,13 @@ export default class App extends React.Component {
       editorState: EditorState.createEmpty(),
       showColorPicker: false,
       editorColor: "black",
-      currentSize: 50
+      size: 50,
+      fontWeight: 'normal',
+      textDecoration: 'none',
+      textAlign: 'left'
     };
+    this.focus = () => this.refs.editor.focus()
     this.onChange = (editorState) => this.setState({editorState});
-    this.focus = () => this.refs.editor.focus();
     this.updateEditorState = editorState => this.setState({ editorState });
   }
 
@@ -61,6 +39,12 @@ export default class App extends React.Component {
       socket.emit('cmd', {foo: 123})
     });
   }
+
+  toggleFontSize = fontSize => {
+    this.setState({
+      size: fontSize
+    });
+  };
 
   _onBoldClick(e) {
     e.preventDefault()
@@ -84,6 +68,17 @@ export default class App extends React.Component {
     });
   }
 
+  _onBulletedClick(e){
+    e.preventDefault();
+    this.onChange(RichUtils.toggleBlockType(this.state.editorState, 'unordered-list-item'))
+  }
+
+  _onNumberedClick(e){
+    e.preventDefault();
+    this.onChange(RichUtils.toggleBlockType(this.state.editorState, 'ordered-list-item'))
+  }
+
+
   handleColorChange(color, e) {
     e.preventDefault();
     console.log(color);
@@ -91,26 +86,21 @@ export default class App extends React.Component {
       editorColor: color.hex,
       showColorPicker: false
     });
+    console.log(this.state.editorColor);
   }
 
-  _onSizeClick(e){
+  toggleAlignment(e){
     e.preventDefault();
-    this.onChange(RichUtils.toggleInlineStyle(this.state.editorState, 'size48'));
-  }
-
-  _onLeftClick(e){
-    e.preventDefault();
-    this.onChange(RichUtils.toggleInlineStyle(this.state.editorState, 'left'));
-  }
-
-  _onRightClick(e){
-    e.preventDefault();
-    this.onChange(RichUtils.toggleInlineStyle(this.state.editorState, 'right'));
-  }
-
-  _onCenterClick(e){
-    e.preventDefault();
-    this.onChange(RichUtils.toggleInlineStyle(this.state.editorState, 'center'));
+    console.log(e.target.value);
+    let x = e.target.value;
+    if (x === 0) {
+      this.state.textAlign = 'center';
+    } else if (x === 1) {
+      this.state.textAlign = 'right';
+    } else if (x === 2) {
+      this.state.textAlign = 'left';
+    }
+    console.log(this.state.textAlign);
   }
 
   addFontSize(size) {
@@ -125,7 +115,12 @@ export default class App extends React.Component {
       minHeight: "100vh",
       padding: "10px",
       margin: "20px",
-      color: this.state.editorColor
+      color: this.state.editorColor,
+      fontSize: this.state.size,
+      fontWeight: this.state.fontWeight,
+      fontStyle: this.state.fontStyle,
+      textDecoration: this.state.textDecoration,
+      textAlign: this.state.textAlign
     }
     const colors = ['#fff', '#000', '#B80000', '#DB3E00', '#FCCB00', '#008B02', '#006B76', '#1273DE'];
     return (<div>
@@ -135,15 +130,16 @@ export default class App extends React.Component {
         <Button variant="outlined" style={{fontStyle: "italic"}} onMouseDown={(e) => this._onItalicClick(e)}>ITALIC</Button>
         <Button variant="outlined" style={{textDecoration: "underline"}} onMouseDown={(e) => this._onUnderlineClick(e)}>UNDERLINE</Button>
         <Button variant="outlined" onMouseDown={(e) => this._onColorClick(e)}>COLOR</Button>
-        <Button variant="outlined" onMouseDown={(e) => this._onSizeClick(e)}>Size test</Button>
-        <SizeMenu setCurrentSize={(e) => this.addFontSize(e)} />
-        <AlignMenu onLeftClick={(e) => this._onLeftClick(e)} onRightClick={(e) => this._onRightClick(e)} onCenterClick={(e) => this._onCenterClick(e)}/>
+        <SizeMenu setCurrentSize={(e) => this.toggleFontSize(e)} />
+        <AlignMenu setAlignment={(e) => this.toggleAlignment(e)} />
+        <Button variant="outlined" style={{textDecoration: 'underline'}} onMouseDown={(e) => this._onBulletedClick(e)}>BULLETED LIST</Button>
+        <Button variant="outlined" style={{textDecoration: 'underline'}} onMouseDown={(e) => this._onNumberedClick(e)}>NUMBERED LIST</Button>
       </div>
       <div>
         {this.state.showColorPicker ? <div style={{position: "absolute", left: "275px"}}><GithubPicker colors={colors} onChange={(color, e) => this.handleColorChange(color, e)}/></div> : <div></div>}
       </div>
       <div style={editorStyle}>
-        <Editor ref="editor" customStyleMap={customStyleMap} customStyleFn={customStyleFn} editorState={this.state.editorState} onChange={this.onChange}/>
+        <Editor ref='editor' editorState={this.state.editorState} onChange={(editorState)=>this.onChange(editorState)}/>
       </div>
     </div>);
   }
