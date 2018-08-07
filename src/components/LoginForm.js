@@ -1,9 +1,6 @@
 import React from 'react';
 import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
-import AppBar from '@material-ui/core/AppBar';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import Card from '@material-ui/core/Card';
+import { AppBar, Button, TextField, Card, CardHeader, Divider, Tabs, Tab } from '@material-ui/core';
 import createMuiTheme from './theme'
 
 export default class LoginForm extends React.Component {
@@ -16,10 +13,20 @@ constructor(props){
  }
 render() {
     return (
-      <div>
+      <div className="form-group" >
         <MuiThemeProvider theme={createMuiTheme}>
-          <Card className="container" align="center">
-          <div >
+          <Card color="blue" className="container" align="center" style={{marginTop: '80px', width: "400px", height:"400px", padding: "40px"}}>
+            <AppBar position="static">
+              <Tabs >
+                <Tab label="LOGIN" />
+              </Tabs>
+            </AppBar>
+
+            <CardHeader
+            title="LOGIN"
+            />
+            <Divider />
+          <div style={{margin: '20px'}}>
             <div >
              <TextField
                hinttext="Enter your Username"
@@ -38,8 +45,10 @@ render() {
                  />
             </div>
                <br/>
+             <Divider />
             <div >
-               <Button primary={true} style={{margin: 15}} onClick={(event) => this.handleClick(event)}>Submit</Button>
+               <Button style={{margin: 15}} onClick={(event) => this.handleClick(event)}>SUBMIT</Button>
+               <Button style={{margin: 15}} onClick={(event) => this.handleClick(event)}>REGISTER</Button>
             </div>
          </div>
        </Card>
