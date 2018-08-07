@@ -14,6 +14,14 @@ const documentSchema = new Schema({
   password: {
     type: String,
     required: true
+  },
+  title: {
+    type: String,
+    required: true
+  },
+  content: {
+    type: Object,
+    required: true
   }
 });
 

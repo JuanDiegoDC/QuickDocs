@@ -4,10 +4,15 @@ var path = require("path");
 var io = require('socket.io')(server);
 import mongoose from "mongoose";
 import User from "./User.js";
+import Document from "./Document.js";
 import bodyParser from "body-parser";
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
+
+app.use(bodyParser.json());
 
 mongoose.connect(process.env.MONGODB_URI, {useNewUrlParser: true}, (error) => {
   if(error){
@@ -26,10 +31,14 @@ passport.use(new LocalStrategy(
       if (!user) {
         return done(null, false, { message: 'Incorrect username.' });
       }
-      if (!user.validPassword(password)) {
-        return done(null, false, { message: 'Incorrect password.' });
-      }
-      return done(null, user);
+      bcrypt.compare(password, user.password).then(function(res) {
+          if (res) {
+            return done(null, user);
+          }
+          else {
+            return done(null, false);
+          }
+      });
     });
   }
 ));
@@ -50,8 +59,37 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.post("/register", (req, res) => {
-  const {username, password} = req.body;
-  console.log(username, password);
+  const {username, password, passwordconfirm, email} = req.body;
+  console.log(username, password, email);
+  if (password === passwordconfirm) {
+    if (password && username && email) {
+      bcrypt.hash(password, saltRounds).then(function(hash) {
+        console.log(hash);
+        const newUser = new User({
+          username: username,
+          password: hash,
+          email: email
+        });
+        newUser.save().then((user) => {
+          if (!user){
+            res.status(500).json({
+              error: "Failed to save user"
+            });
+          }
+          else {
+            res.status(200).json({
+              success: true
+            });
+          }
+        });
+      });
+    }
+  }
+  else {
+    res.json({
+      error: "Password must match"
+    });
+  }
 });
 
 app.get("/ping", (req, res) => {
@@ -60,8 +98,8 @@ app.get("/ping", (req, res) => {
 
 app.post('/login',
   passport.authenticate('local'), (req, res) => {
-    console.log("Request received");
   if (req.user) {
+    console.log(req.user);
     res.json({
       success: true
     });
@@ -71,6 +109,33 @@ app.post('/login',
       error: "Invalid credentials"
     })
   }
+  });
+
+  app.use("/", (req, res, next) => {
+    if (req.user) {
+      return next();
+    }
+    else {
+      res.json({
+        error: "Unauthorized"
+      });
+    }
+  });
+
+  //EVERYTHING BELOW HERE MUST BE AUTHORIZED
+
+  app.get("/logout", (req, res) => {
+    req.logout();
+    res.json({
+      success: true
+    });
+  });
+
+  app.get("/documents", (req, res) => {
+    let docs = [];
+    Document.find({collaborator: req.user._id}, (error, docs) => {
+      console.log(docs);
+    });
   });
 
 io.on('connection', function (socket) {
