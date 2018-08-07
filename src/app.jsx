@@ -6,8 +6,8 @@ import PropTypes from 'prop-types';
 import { GithubPicker } from 'react-color';
 import { withStyles } from '@material-ui/core/styles';
 import SizeMenu from "./components/SizeMenu.js";
-
-let  size = 16;
+import AlignMenu from "./components/AlignMenu.js";
+import createStyles from 'draft-js-custom-styles';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -16,9 +16,14 @@ export default class App extends React.Component {
       editorState: EditorState.createEmpty(),
       showColorPicker: false,
       editorColor: "black",
-      currentSize: 50
+      size: 50,
+      fontWeight: 'normal',
+      textDecoration: 'none',
+      textAlign: 'left'
     };
+    this.focus = () => this.refs.editor.focus()
     this.onChange = (editorState) => this.setState({editorState});
+    this.updateEditorState = editorState => this.setState({ editorState });
   }
 
   componentDidMount() {
@@ -34,6 +39,12 @@ export default class App extends React.Component {
       socket.emit('cmd', {foo: 123})
     });
   }
+
+  toggleFontSize = fontSize => {
+    this.setState({
+      size: fontSize
+    });
+  };
 
   _onBoldClick(e) {
     e.preventDefault()
@@ -57,6 +68,17 @@ export default class App extends React.Component {
     });
   }
 
+  _onBulletedClick(e){
+    e.preventDefault();
+    this.onChange(RichUtils.toggleBlockType(this.state.editorState, 'unordered-list-item'))
+  }
+
+  _onNumberedClick(e){
+    e.preventDefault();
+    this.onChange(RichUtils.toggleBlockType(this.state.editorState, 'ordered-list-item'))
+  }
+
+
   handleColorChange(color, e) {
     e.preventDefault();
     console.log(color);
@@ -64,19 +86,21 @@ export default class App extends React.Component {
       editorColor: color.hex,
       showColorPicker: false
     });
+    console.log(this.state.editorColor);
   }
 
-  _onSizeClick(e){
+  toggleAlignment(e){
     e.preventDefault();
-    this.onChange(RichUtils.toggleInlineStyle(this.state.editorState, 'SIZE'));
-  }
-
-  setCurrentSize(e) {
-    console.log("Called", typeof e.target.value);
-    var s = this.state.editorState;
-    console.log(this.state.editorState);
-    size = e.target.value;
-    this.onChange(RichUtils.toggleInlineStyle(this.state.editorState, 'SIZE'));
+    console.log(e.target.value);
+    let x = e.target.value;
+    if (x === 0) {
+      this.state.textAlign = 'center';
+    } else if (x === 1) {
+      this.state.textAlign = 'right';
+    } else if (x === 2) {
+      this.state.textAlign = 'left';
+    }
+    console.log(this.state.textAlign);
   }
 
   render() {
@@ -85,14 +109,14 @@ export default class App extends React.Component {
       minHeight: "100vh",
       padding: "10px",
       margin: "20px",
-      color: this.state.editorColor
+      color: this.state.editorColor,
+      fontSize: this.state.size,
+      fontWeight: this.state.fontWeight,
+      fontStyle: this.state.fontStyle,
+      textDecoration: this.state.textDecoration,
+      textAlign: this.state.textAlign
     }
     const colors = ['#fff', '#000', '#B80000', '#DB3E00', '#FCCB00', '#008B02', '#006B76', '#1273DE'];
-    let customStyles = {
-      "SIZE": {
-        fontSize: size
-      },
-    }
     return (<div>
       <h1>Welcome to this editor!</h1>
       <div id="buttonWrapper">
@@ -100,14 +124,16 @@ export default class App extends React.Component {
         <Button variant="outlined" style={{fontStyle: "italic"}} onMouseDown={(e) => this._onItalicClick(e)}>ITALIC</Button>
         <Button variant="outlined" style={{textDecoration: "underline"}} onMouseDown={(e) => this._onUnderlineClick(e)}>UNDERLINE</Button>
         <Button variant="outlined" onMouseDown={(e) => this._onColorClick(e)}>COLOR</Button>
-        <Button variant="outlined" onMouseDown={(e) => this._onSizeClick(e)}>Size test</Button>
-        <SizeMenu setCurrentSize={(e) => this.setCurrentSize(e)} />
+        <SizeMenu setCurrentSize={(e) => this.toggleFontSize(e)} />
+        <AlignMenu setAlignment={(e) => this.toggleAlignment(e)} />
+        <Button variant="outlined" style={{textDecoration: 'underline'}} onMouseDown={(e) => this._onBulletedClick(e)}>BULLETED LIST</Button>
+        <Button variant="outlined" style={{textDecoration: 'underline'}} onMouseDown={(e) => this._onNumberedClick(e)}>NUMBERED LIST</Button>
       </div>
       <div>
         {this.state.showColorPicker ? <div style={{position: "absolute", left: "275px"}}><GithubPicker colors={colors} onChange={(color, e) => this.handleColorChange(color, e)}/></div> : <div></div>}
       </div>
       <div style={editorStyle}>
-        <Editor customStyleMap={customStyles} editorState={this.state.editorState} onChange={this.onChange}/>
+        <Editor ref='editor' editorState={this.state.editorState} onChange={(editorState)=>this.onChange(editorState)}/>
       </div>
     </div>);
   }
