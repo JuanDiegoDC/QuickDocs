@@ -20,7 +20,7 @@ class Header extends React.Component {
           <Typography variant="title" color="inherit">
             Documents Portal
           </Typography>
-          <div className="justify-content-end">
+          <div style={{position: "absolute", right: 0}}>
           <Button color="inherit" style={{marginLeft: "150px"}}>
             <CreateIcon /> Create Document
           </Button>

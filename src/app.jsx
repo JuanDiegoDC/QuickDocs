@@ -34,18 +34,13 @@ export default class App extends React.Component {
 
   render(){
     return(
-<<<<<<< HEAD
-      <DocumentPortal />
-=======
       <div>
         {this.state.loggedIn ?
-          <p>Logged in!</p>
+          <DocumentPortal />
           :
           <LoginForm register={() => this.register()} login={() => this.login()} logout={() => this.logout()} />
          }
-
       </div>
->>>>>>> f44a0c35c68c7f1a024e19d575f5d908e6c11077
     )
   }
 }

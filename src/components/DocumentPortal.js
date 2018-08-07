@@ -1,7 +1,7 @@
 import React from 'react';
 import Header from './layouts/Header';
 import { Button, Paper, Card, Table, TableHead, TableRow, TableCell, TableBody } from '@material-ui/core';
-import CreateIcon from '@material-ui/icons';
+import Edit from '@material-ui/icons';
 
 class DocumentPortal extends React.Component {
   constructor(props){
@@ -11,7 +11,7 @@ class DocumentPortal extends React.Component {
 
   render(){
     return(
-      <div>
+      <div style={{minWidth: "600px"}}>
       <Header />
       <Card style={{margin: '20px'}}>
         <Table>
@@ -30,7 +30,7 @@ class DocumentPortal extends React.Component {
                   {n.name}
                 </TableCell>
                 <TableCell >{n.calories}</TableCell>
-                <TableCell><Button>EDIT</Button></TableCell>
+                <TableCell><Button variant="extendedFab">edit</Button></TableCell>
               </TableRow>
             );
           })}
