@@ -50,7 +50,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.post("/register", (req, res) => {
-
+  const {username, password} = req.body;
+  console.log(username, password);
 });
 
 app.get("/ping", (req, res) => {
@@ -59,6 +60,7 @@ app.get("/ping", (req, res) => {
 
 app.post('/login',
   passport.authenticate('local'), (req, res) => {
+    console.log("Request received");
   if (req.user) {
     res.json({
       success: true
