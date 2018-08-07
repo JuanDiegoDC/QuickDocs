@@ -35,12 +35,13 @@ class SizeMenu extends React.Component {
           open={Boolean(anchorEl)}
           onClose={this.handleClose}
         >
-          <MenuItem value={12} onClick={(e) => {this.props.setCurrentSize(e); this.handleClose()}}>12</MenuItem>
-          <MenuItem value={14} onClick={(e) => {this.props.setCurrentSize(e); this.handleClose()}}>14</MenuItem>
-          <MenuItem value={16} onClick={(e) => {this.props.setCurrentSize(e); this.handleClose()}}>16</MenuItem>
-          <MenuItem value={18} onClick={(e) => {this.props.setCurrentSize(e); this.handleClose()}}>18</MenuItem>
-          <MenuItem value={24} onClick={(e) => {this.props.setCurrentSize(e); this.handleClose()}}>24</MenuItem>
-          <MenuItem value={32} onClick={(e) => {this.props.setCurrentSize(e); this.handleClose()}}>32</MenuItem>
+          <MenuItem onMouseDown={() => {this.props.setCurrentSize("size12"); this.handleClose()}}>12</MenuItem>
+          <MenuItem onMouseDown={() => {this.props.setCurrentSize("size14"); this.handleClose()}}>14</MenuItem>
+          <MenuItem onMouseDown={() => {this.props.setCurrentSize("size16"); this.handleClose()}}>16</MenuItem>
+          <MenuItem onMouseDown={() => {this.props.setCurrentSize("size18"); this.handleClose()}}>18</MenuItem>
+          <MenuItem onMouseDown={() => {this.props.setCurrentSize("size24"); this.handleClose()}}>24</MenuItem>
+          <MenuItem onMouseDown={() => {this.props.setCurrentSize("size32"); this.handleClose()}}>32</MenuItem>
+          <MenuItem onMouseDown={() => {this.props.setCurrentSize("size48"); this.handleClose()}}>48</MenuItem>
         </Menu>
       </span>
     );

@@ -3,7 +3,7 @@ import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 
-class SizeMenu extends React.Component {
+class AlignMenu extends React.Component {
   state = {
     anchorEl: null,
   };
@@ -35,13 +35,13 @@ class SizeMenu extends React.Component {
           open={Boolean(anchorEl)}
           onClose={this.handleClose}
         >
-          <MenuItem value={12} onClick={(e) => {this.props.setCurrentSize(e); this.handleClose()}}>12</MenuItem>
-          <MenuItem value={14} onClick={(e) => {this.props.setCurrentSize(e); this.handleClose()}}>14</MenuItem>
-          <MenuItem value={14} onClick={(e) => {this.props.setCurrentSize(e); this.handleClose()}}>14</MenuItem>
+          <MenuItem onClick={(e) => {this.props.onLeftClick(e); this.handleClose()}}>Left</MenuItem>
+          <MenuItem onClick={(e) => {this.props.onRightClick(e); this.handleClose()}}>Right</MenuItem>
+          <MenuItem onClick={(e) => {this.props.onCenterClick(e); this.handleClose()}}>Center</MenuItem>
         </Menu>
       </span>
     );
   }
 }
 
-export default SizeMenu;
+export default AlignMenu;

@@ -6,8 +6,7 @@ import PropTypes from 'prop-types';
 import { GithubPicker } from 'react-color';
 import { withStyles } from '@material-ui/core/styles';
 import SizeMenu from "./components/SizeMenu.js";
-
-let  size = 16;
+import AlignMenu from "./components/AlignMenu.js";
 
 export default class App extends React.Component {
   constructor(props) {
@@ -19,6 +18,7 @@ export default class App extends React.Component {
       currentSize: 50
     };
     this.onChange = (editorState) => this.setState({editorState});
+    this.focus = () => this.refs.editor.focus();
   }
 
   componentDidMount() {
@@ -71,12 +71,33 @@ export default class App extends React.Component {
     this.onChange(RichUtils.toggleInlineStyle(this.state.editorState, 'SIZE'));
   }
 
+  _onLeftClick(e){
+    e.preventDefault();
+    this.onChange(RichUtils.toggleInlineStyle(this.state.editorState, 'left'));
+  }
+
+  _onRightClick(e){
+    e.preventDefault();
+    this.onChange(RichUtils.toggleInlineStyle(this.state.editorState, 'right'));
+  }
+
+  _onCenterClick(e){
+    e.preventDefault();
+    this.onChange(RichUtils.toggleInlineStyle(this.state.editorState, 'center'));
+  }
+
   setCurrentSize(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    this.focus();
     console.log("Called", typeof e.target.value);
     var s = this.state.editorState;
     console.log(this.state.editorState);
-    size = e.target.value;
-    this.onChange(RichUtils.toggleInlineStyle(this.state.editorState, 'SIZE'));
+    this.setState({
+      currentSize: e.target.value
+    }, () => {
+      this.onChange(RichUtils.toggleInlineStyle(this.state.editorState, 'SIZE'));
+    });
   }
 
   render() {
@@ -87,13 +108,13 @@ export default class App extends React.Component {
       margin: "20px",
       color: this.state.editorColor
     }
-    const colors = ['#fff', '#000', '#B80000', '#DB3E00', '#FCCB00', '#008B02', '#006B76', '#1273DE'];
     let customStyles = {
       "SIZE": {
-        fontSize: size
-      },
+        fontSize: 50
+      }
     }
-    return (<div>
+    const colors = ['#fff', '#000', '#B80000', '#DB3E00', '#FCCB00', '#008B02', '#006B76', '#1273DE'];
+    return (<div onClick={() => this.focus()}>
       <h1>Welcome to this editor!</h1>
       <div id="buttonWrapper">
         <Button variant="outlined" style={{fontWeight: "bold"}} onMouseDown={(e) => this._onBoldClick(e)}>BOLD</Button>
@@ -102,12 +123,13 @@ export default class App extends React.Component {
         <Button variant="outlined" onMouseDown={(e) => this._onColorClick(e)}>COLOR</Button>
         <Button variant="outlined" onMouseDown={(e) => this._onSizeClick(e)}>Size test</Button>
         <SizeMenu setCurrentSize={(e) => this.setCurrentSize(e)} />
+        <AlignMenu onLeftClick={(e) => this._onLeftClick(e)} onRightClick={(e) => this._onRightClick(e)} onCenterClick={(e) => this._onCenterClick(e)}/>
       </div>
       <div>
         {this.state.showColorPicker ? <div style={{position: "absolute", left: "275px"}}><GithubPicker colors={colors} onChange={(color, e) => this.handleColorChange(color, e)}/></div> : <div></div>}
       </div>
       <div style={editorStyle}>
-        <Editor customStyleMap={customStyles} editorState={this.state.editorState} onChange={this.onChange}/>
+        <Editor ref="editor" customStyleMap={customStyles} editorState={this.state.editorState} onChange={this.onChange}/>
       </div>
     </div>);
   }
