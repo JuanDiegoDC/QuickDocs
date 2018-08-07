@@ -43,7 +43,6 @@ export default class App extends React.Component {
           :
           <LoginForm register={() => this.register()} login={() => this.login()} logout={() => this.logout()} />
          }
-
       </div>
     )
   }
