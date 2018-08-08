@@ -11,7 +11,11 @@ class DocumentPortal extends React.Component {
     this.state = {
       documents: [],
       isEditing: false,
+<<<<<<< HEAD
+      dialogOpen: false
+=======
       editingDocument: null
+>>>>>>> e23a6c02fce484d0689a0d820c9b831f896dfee4
     }
   }
 
@@ -116,6 +120,12 @@ class DocumentPortal extends React.Component {
     });
   }
 
+  toggleDialog(){
+    this.setState({
+      dialogOpen: !this.state.dialogOpen
+    });
+  }
+
   render(){
     return(
       <div>
@@ -141,7 +151,43 @@ class DocumentPortal extends React.Component {
                       {n.title}
                     </TableCell>
                     <TableCell >{n.owner}</TableCell>
+<<<<<<< HEAD
+                    <TableCell>
+                      <Button onClick={() => this.toggleDialog()} variant="extendedFab">
+                        edit
+                          <Dialog
+                        title="Dialog With Actions"
+                        open={this.state.dialogOpen}
+                        onClose={this.toggleDialog}
+                          >
+                          <DialogTitle id="form-dialog-title"> Access (document name)</DialogTitle>
+                          <DialogContent>
+                            <DialogContentText>
+                              Please enter (insert document name here)'s password:
+                            </DialogContentText>
+                            <TextField
+                          autoFocus
+                          margin="dense"
+                          id="docPassword"
+                          label="Password"
+                          type="password"
+                          fullWidth
+                            />
+                          </DialogContent>
+                          <DialogActions>
+                            <Button onClick={() => this.toggleDialog()} color="primary">
+                              Cancel
+                            </Button>
+                            <Button color="primary">
+                              Submit
+                            </Button>
+                          </DialogActions>
+                        </Dialog>
+                      </Button>
+                    </TableCell>
+=======
                     <TableCell><Button onClick={() => this.editDocument(event, n._id)} variant="extendedFab">edit</Button></TableCell>
+>>>>>>> e23a6c02fce484d0689a0d820c9b831f896dfee4
                   </TableRow>
                 );
               })}
