@@ -21,7 +21,7 @@ const documentSchema = new Schema({
   },
   content: {
     type: Object,
-    required: true
+    required: false
   }
 });
 

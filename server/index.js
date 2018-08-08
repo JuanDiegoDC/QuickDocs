@@ -148,15 +148,14 @@ function(req, res, next) {
       });
     }
     else {
-      const {title, password, content} = req.body;
+      const {title, password} = req.body;
       const owner = req.user._id;
-      if (title && password && content) {
+      if (title && password) {
         const newDoc = new Document({
           title: title,
           password: password,
           owner: owner,
           collaborators: [owner],
-          content: content
         });
         newDoc.save()
         .then((doc) => {
@@ -172,6 +171,31 @@ function(req, res, next) {
           }
         });
       }
+    }
+  });
+
+  app.post("/document", (req, res) => {
+    if (!req.user) {
+      res.json({
+        error: "Unauthorized"
+      });
+    }
+    else {
+      {id} = req.body;
+      Document.findOne(id)
+        .then((error, doc) => {
+          if(error) {
+            console.log(error);
+            res.json({
+              error: "Failed to retrieve document"
+            });
+          }
+          else {
+            res.json({
+              doc: doc
+            });
+          }
+        })
     }
   });
 
@@ -202,6 +226,31 @@ function(req, res, next) {
     res.json({
       success: true
     });
+  });
+
+  app.post("/save/document", (req, res) => {
+    if (!req.user) {
+      res.json({
+        error: "Unauthorized"
+      });
+    }
+    else {
+      {content, id} = req.body;
+      Document.findOneAndUpdate(id, {content: content})
+        .then((error) => {
+          if (error) {
+            console.log(error);
+            res.json({
+              error: "Could not save"
+            });
+          }
+          else {
+            res.json({
+              success: true
+            });
+          }
+        });
+    }
   });
 
 io.on('connection', function (socket) {
