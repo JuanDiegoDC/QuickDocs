@@ -10,7 +10,8 @@ class DocumentPortal extends React.Component {
     super(props);
     this.state = {
       documents: [],
-      isEditing: false
+      isEditing: false,
+      editingDocument: null
     }
   }
 
@@ -47,6 +48,12 @@ class DocumentPortal extends React.Component {
     });
   }
 
+  editDocument() {
+    this.setState({
+      isEditing: !this.state.editing
+    });
+  }
+
   render(){
     return(
       <div>
@@ -54,7 +61,7 @@ class DocumentPortal extends React.Component {
           <TextEditor />
           :
           <div style={{minWidth: "600px"}}>
-          <Header />
+          <Header editToggle={() => this.editToggle()} />
           <Card style={{margin: '20px'}}>
             <Table>
             <TableHead>
