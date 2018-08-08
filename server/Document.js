@@ -8,7 +8,7 @@ const documentSchema = new Schema({
     required: true
   },
   owner: {
-    type: ObjectId,
+    type: String,
     required: true
   },
   password: {

@@ -56,6 +56,7 @@ render() {
               </Typography>
             </AppBar>
             <Divider />
+            <img src="../public/typewriter.png"></img>
           <div style={{margin: '20px'}}>
             <div >
              <TextField
