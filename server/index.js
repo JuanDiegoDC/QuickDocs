@@ -181,7 +181,7 @@ function(req, res, next) {
       });
     }
     else {
-      {id} = req.body;
+      const {id} = req.body;
       Document.findOne(id)
         .then((error, doc) => {
           if(error) {
@@ -235,7 +235,7 @@ function(req, res, next) {
       });
     }
     else {
-      {content, id} = req.body;
+      const {content, id} = req.body;
       Document.findOneAndUpdate(id, {content: content})
         .then((error) => {
           if (error) {

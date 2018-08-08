@@ -1,6 +1,6 @@
 import React from 'react';
 import Header from './layouts/Header';
-import { Button, Paper, Card, Table, TableHead, TableRow, TableCell, TableBody } from '@material-ui/core';
+import { Button, Paper, Card, Table, TableHead, TableRow, TableCell, TableBody, Dialog, DialogTitle, DialogActions, DialogContent, DialogContentText, TextField } from '@material-ui/core';
 import Edit from '@material-ui/icons';
 const url = "http://localhost:8080";
 import TextEditor from './TextEditor';
@@ -11,11 +11,8 @@ class DocumentPortal extends React.Component {
     this.state = {
       documents: [],
       isEditing: false,
-<<<<<<< HEAD
-      dialogOpen: false
-=======
+      dialogOpen: false,
       editingDocument: null
->>>>>>> e23a6c02fce484d0689a0d820c9b831f896dfee4
     }
   }
 
@@ -151,7 +148,6 @@ class DocumentPortal extends React.Component {
                       {n.title}
                     </TableCell>
                     <TableCell >{n.owner}</TableCell>
-<<<<<<< HEAD
                     <TableCell>
                       <Button onClick={() => this.toggleDialog()} variant="extendedFab">
                         edit
@@ -185,9 +181,7 @@ class DocumentPortal extends React.Component {
                         </Dialog>
                       </Button>
                     </TableCell>
-=======
                     <TableCell><Button onClick={() => this.editDocument(event, n._id)} variant="extendedFab">edit</Button></TableCell>
->>>>>>> e23a6c02fce484d0689a0d820c9b831f896dfee4
                   </TableRow>
                 );
               })}
