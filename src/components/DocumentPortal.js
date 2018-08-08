@@ -1,6 +1,6 @@
 import React from 'react';
 import Header from './layouts/Header';
-import { Button, Paper, Card, Table, TableHead, TableRow, TableCell, TableBody } from '@material-ui/core';
+import { Button, Paper, Card, Table, TableHead, TableRow, TableCell, TableBody, Dialog, DialogTitle, DialogActions, DialogContent, DialogContentText, TextField } from '@material-ui/core';
 import Edit from '@material-ui/icons';
 const url = "http://localhost:8080";
 import TextEditor from './TextEditor';
@@ -46,9 +46,59 @@ class DocumentPortal extends React.Component {
 
 
   editToggle() {
+    fetch(url + '/create/document', {
+     method: 'POST',
+     credentials: "same-origin",
+     headers: {
+       'Content-Type': 'application/json',
+     },
+     body: {
+       title: this.state.title,
+       password: this.state.password
+     }
+   })
+   .then((res) => {console.log(res); if(res.status !== 200) {
+     return res.text();
+   } else {
+     return res.json()
+   }})
+   .then((resJson) => {
+     console.log(resJson);
+     if (resJson.success) {
+       console.log("Finished creating document");
+     }
+   })
+   .then(() => {
+     fetch(url + '/documents', {
+      method: 'GET',
+      credentials: "same-origin",
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    .then((res) => {console.log(res); if(res.status !== 200) {
+      return res.text();
+    } else {
+      return res.json()
+    }})
+    .then((resJson) => {
+      console.log(resJson);
+      if (resJson.success) {
+        console.log("Success is true");
+        this.setState({
+          documents: resJson.docs
+        });
+      }
+    })
+   })
+   .catch((err) => {
+     console.log(err);
+   })
+
     console.log("Toggle called");
     this.setState({
-      isEditing: !this.state.isEditing
+      isEditing: !this.state.isEditing,
+      editingDocument: {title: "untitled"}
     }, () => {
       console.log(this.state);
     });
@@ -130,6 +180,7 @@ class DocumentPortal extends React.Component {
                         </Dialog>
                       </Button>
                     </TableCell>
+                    <TableCell><Button onClick={() => this.editDocument(event, n._id)} variant="extendedFab">edit</Button></TableCell>
                   </TableRow>
                 );
               })}

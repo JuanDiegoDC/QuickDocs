@@ -7,7 +7,6 @@ import SaveIcon from '@material-ui/icons/Save';
 class HeaderEditor extends React.Component {
   constructor(props){
     super(props)
-
   }
 
   render(){
@@ -19,10 +18,10 @@ class HeaderEditor extends React.Component {
             <MenuIcon />
           </IconButton>
           <Typography variant="title" color="inherit">
-            {this.props.title}
+            {this.props.title || "Untitled"}
           </Typography>
           <div style={{position: "absolute", right: 0}}>
-          <Button onClick={() => this.props.saveDocument()} color="inherit" style={{marginLeft: "150px"}}>
+          <Button onClick={(e) => this.props.saveDocument(e)} color="inherit" style={{marginLeft: "150px"}}>
             <SaveIcon /> Save
           </Button>
           <Button onClick={() => this.props.editToggle()} color="inherit" style={{marginLeft: "150px"}}>

@@ -46,7 +46,7 @@ export default class TextEditor extends React.Component {
       size: 50,
       fontWeight: 'normal',
       textDecoration: 'none',
-      textAlign: 'left'
+      textAlign: 'left',
     };
     this.focus = () => this.refs.editor.focus()
     this.onChange = (editorState) => this.setState({editorState});
@@ -145,7 +145,8 @@ export default class TextEditor extends React.Component {
     })
   }
 
-  saveDocument() {
+  saveDocument(e) {
+    e.preventDefault();
     fetch(url + '/create/document', {
      method: 'POST',
      credentials: "same-origin",
@@ -191,7 +192,7 @@ export default class TextEditor extends React.Component {
 
     return (
       <div>
-      <HeaderEditor saveDocument={() => this.saveDocument()} editToggle={() => this.props.editToggle()} title={this.props.document.title} />
+      <HeaderEditor saveDocument={(e) => this.saveDocument(e)} editToggle={() => this.props.editToggle()} title={this.props.document.title} />
       <div id="buttonWrapper">
         <Button variant="outlined" style={{fontWeight: "bold"}} onMouseDown={(e) => this._onBoldClick(e)}>BOLD</Button>
         <Button variant="outlined" style={{fontStyle: "italic"}} onMouseDown={(e) => this._onItalicClick(e)}>ITALIC</Button>
