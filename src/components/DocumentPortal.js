@@ -2,11 +2,41 @@ import React from 'react';
 import Header from './layouts/Header';
 import { Button, Paper, Card, Table, TableHead, TableRow, TableCell, TableBody } from '@material-ui/core';
 import Edit from '@material-ui/icons';
+const url = "http://localhost:8080";
 
 class DocumentPortal extends React.Component {
   constructor(props){
     super(props);
+    this.state = {
+      documents: []
+    }
+  }
 
+  componentWillMount(){
+    fetch(url + '/documents', {
+     method: 'GET',
+     credentials: "same-origin",
+     headers: {
+       'Content-Type': 'application/json',
+     },
+   })
+   .then((res) => {console.log(res); if(res.status !== 200) {
+     return res.text();
+   } else {
+     return res.json()
+   }})
+   .then((resJson) => {
+     console.log(resJson);
+     if (resJson.success) {
+       console.log("Success is true");
+       this.setState({
+         documents: resJson.docs
+       });
+     }
+   })
+   .catch((err) => {
+     console.log(err);
+   })
   }
 
   render(){
@@ -19,17 +49,17 @@ class DocumentPortal extends React.Component {
           <TableRow>
             <TableCell>My Documents</TableCell>
             <TableCell>Date of Creation</TableCell>
-            <TableCell></TableCell>
+            <TableCell>Owner</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {data.map(n => {
+          {this.state.documents.map(n => {
             return (
-              <TableRow hover key={n.id}>
+              <TableRow hover key={n._id}>
                 <TableCell component="th" scope="row">
-                  {n.name}
+                  {n.title}
                 </TableCell>
-                <TableCell >{n.calories}</TableCell>
+                <TableCell >{n.owner}</TableCell>
                 <TableCell><Button variant="extendedFab">edit</Button></TableCell>
               </TableRow>
             );
@@ -41,19 +71,5 @@ class DocumentPortal extends React.Component {
     )
   }
 }
-
-let id = 0;
-function createData(name, calories, fat, carbs, protein) {
-  id += 1;
-  return { id, name, calories, fat, carbs, protein };
-}
-
-const data = [
-  createData('Cryptocurrency Report', '01/04/18', 6.0, 24, 4.0),
-  createData('Workouts', '20/03/18', 9.0, 37, 4.3),
-  createData('Grocery List', '13/03/18', 16.0, 24, 6.0),
-  createData('React.JS Class Notes', '17/03/18', 3.7, 67, 4.3),
-  createData('REAMDE', '01/01/18', 16.0, 49, 3.9),
-];
 
 export default DocumentPortal;

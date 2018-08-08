@@ -113,6 +113,7 @@ function(req, res, next) {
       });
     }
     req.logIn(user, function(err) {
+      console.log("User:", user);
       if (err) {
         return res.json({
           error: err
@@ -127,7 +128,35 @@ function(req, res, next) {
   })(req, res, next);
 });
 
+app.post("/create/document", (req, res) => {
+  const {title, password, content} = req.body;
+  const owner = "5b6a1ccb925dab234ca25f15";
+  if (title && password && content) {
+    const newDoc = new Document({
+      title: title,
+      password: password,
+      owner: owner,
+      collaborators: [owner],
+      content: content
+    });
+    newDoc.save()
+    .then((doc) => {
+      if (!doc) {
+        res.json({
+          error: "Failed to save document"
+        });
+      }
+      else {
+        res.json({
+          success: true
+        });
+      }
+    });
+  }
+});
+
   app.use("/", (req, res, next) => {
+    console.log(req.user);
     if (req.user) {
       return next();
     }
@@ -148,12 +177,12 @@ function(req, res, next) {
   });
 
   app.get("/documents", (req, res) => {
-    let docs = [];
-    Document.find({collaborator: req.user._id}, (error, docs) => {
+    Document.find({collaborator: req.user}, (error, docs) => {
       if (error){
         console.log(error);
       }
       res.json({
+        success: true,
         docs: docs
       });
     });
