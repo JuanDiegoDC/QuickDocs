@@ -135,9 +135,9 @@ class DocumentPortal extends React.Component {
             <Table>
             <TableHead>
               <TableRow>
-                <TableCell>My Documents</TableCell>
-                <TableCell>Date of Creation</TableCell>
+                <TableCell>Title</TableCell>
                 <TableCell>Owner</TableCell>
+                <TableCell>Edit</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -148,6 +148,7 @@ class DocumentPortal extends React.Component {
                       {n.title}
                     </TableCell>
                     <TableCell >{n.owner}</TableCell>
+                    {/*}
                     <TableCell>
                       <Button onClick={() => this.toggleDialog()} variant="extendedFab">
                         edit
@@ -181,6 +182,7 @@ class DocumentPortal extends React.Component {
                         </Dialog>
                       </Button>
                     </TableCell>
+                    {*/}
                     <TableCell><Button onClick={() => this.editDocument(event, n._id)} variant="extendedFab">edit</Button></TableCell>
                   </TableRow>
                 );
