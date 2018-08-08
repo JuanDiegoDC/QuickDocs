@@ -1,7 +1,13 @@
 import React from 'react';
-import Button from '@material-ui/core/Button';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
+import { Button,
+  Menu,
+  MenuItem
+ } from '@material-ui/core';
+import { FormatAlignCenter,
+  FormatAlignJustify,
+  FormatAlignLeft,
+  FormatAlignRight
+} from '@material-ui/icons'
 
 class AlignMenu extends React.Component {
   state = {
@@ -20,26 +26,36 @@ class AlignMenu extends React.Component {
     const { anchorEl } = this.state;
 
     return (
-      <span>
+      <div>
         <Button
-          variant="outlined"
-          aria-owns={anchorEl ? 'simple-menu' : null}
-          aria-haspopup="true"
-          onClick={this.handleClick}
+          variant={'contained'}
+          color={'default'}
+          onMouseDown={(e, align) => {this.props.setAlignment(e, 'left')}}
         >
-          Text Alignment
+          <FormatAlignLeft />
         </Button>
-        <Menu
-          id="simple-menu"
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          onClose={this.handleClose}
+        <Button
+          variant={'contained'}
+          color={'default'}
+          onMouseDown={(e, align) => {this.props.setAlignment(e, 'center')}}
         >
-          <MenuItem value='0' onMouseDown={(e) => {this.props.setAlignment(e); this.handleClose()}}>Center</MenuItem>
-          <MenuItem value='1' onMouseDown={(e) => {this.props.setAlignment(e); this.handleClose()}}>Left</MenuItem>
-          <MenuItem value='2' onMouseDown={(e) => {this.props.setAlignment(e); this.handleClose()}}>Right</MenuItem>
-        </Menu>
-      </span>
+          <FormatAlignCenter />
+        </Button>
+        <Button
+          variant={'contained'}
+          color={'default'}
+          onMouseDown={(e, align) => {this.props.setAlignment(e, 'right')}}
+        >
+          <FormatAlignRight />
+        </Button>
+        <Button
+          variant={'contained'}
+          color={'default'}
+          onMouseDown={(e, align) => {this.props.setAlignment(e, 'justify')}}
+        >
+          <FormatAlignJustify />
+        </Button>
+      </div>
     );
   }
 }
