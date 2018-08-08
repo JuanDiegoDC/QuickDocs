@@ -11,7 +11,11 @@ class DocumentPortal extends React.Component {
     this.state = {
       documents: [],
       isEditing: false,
+<<<<<<< HEAD
       dialogOpen: false
+=======
+      editingDocument: null
+>>>>>>> e23a6c02fce484d0689a0d820c9b831f896dfee4
     }
   }
 
@@ -42,9 +46,27 @@ class DocumentPortal extends React.Component {
    })
   }
 
+
+
   editToggle() {
+    console.log("Toggle called");
     this.setState({
-      isEditing: !this.state.editing
+      isEditing: !this.state.isEditing
+    }, () => {
+      console.log(this.state);
+    });
+  }
+
+  editDocument(event, id) {
+    let doc = {};
+    this.state.documents.forEach((item) => {
+      if (item._id === id) {
+        doc = item;
+      }
+    });
+    this.setState({
+      isEditing: !this.state.isEditing,
+      editingDocument: doc
     });
   }
 
@@ -58,10 +80,10 @@ class DocumentPortal extends React.Component {
     return(
       <div>
         {this.state.isEditing ?
-          <TextEditor />
+          <TextEditor editToggle={() => this.editToggle()} document={this.state.editingDocument} />
           :
           <div style={{minWidth: "600px"}}>
-          <Header />
+          <Header editToggle={() => this.editToggle()} />
           <Card style={{margin: '20px'}}>
             <Table>
             <TableHead>
@@ -79,6 +101,7 @@ class DocumentPortal extends React.Component {
                       {n.title}
                     </TableCell>
                     <TableCell >{n.owner}</TableCell>
+<<<<<<< HEAD
                     <TableCell>
                       <Button onClick={() => this.toggleDialog()} variant="extendedFab">
                         edit
@@ -112,6 +135,9 @@ class DocumentPortal extends React.Component {
                         </Dialog>
                       </Button>
                     </TableCell>
+=======
+                    <TableCell><Button onClick={() => this.editDocument(event, n._id)} variant="extendedFab">edit</Button></TableCell>
+>>>>>>> e23a6c02fce484d0689a0d820c9b831f896dfee4
                   </TableRow>
                 );
               })}

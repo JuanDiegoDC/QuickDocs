@@ -15,6 +15,7 @@ import AlignMenu from "./AlignMenu.js";
 import createStyles from 'draft-js-custom-styles';
 import { Map } from 'immutable';
 import HeaderEditor from './layouts/HeaderEditor';
+const url = "http://localhost:8080";
 
 // Initializing editor text transformation variables
 
@@ -53,6 +54,11 @@ export default class TextEditor extends React.Component {
   }
 
   componentDidMount() {
+    if (this.props.document) {
+      this.setState({
+        EditorState: this.props.document.content
+      });
+    }
     const socket = io('http://localhost:8080');
     socket.on('connect', function() {
       console.log('ws connect')
@@ -139,6 +145,35 @@ export default class TextEditor extends React.Component {
     })
   }
 
+  saveDocument() {
+    fetch(url + '/create/document', {
+     method: 'POST',
+     credentials: "same-origin",
+     headers: {
+       'Content-Type': 'application/json',
+     },
+     body: {
+       title: "example",
+       content: this.state.editorState,
+       password: "123"
+     }
+   })
+   .then((res) => {console.log(res); if(res.status !== 200) {
+     return res.text();
+   } else {
+     return res.json()
+   }})
+   .then((resJson) => {
+     console.log(resJson);
+     if (resJson.success) {
+       console.log("Success is true");
+     }
+   })
+   .catch((err) => {
+     console.log(err);
+   })
+  }
+
 
   render() {
     const editorStyle = {
@@ -156,7 +191,7 @@ export default class TextEditor extends React.Component {
 
     return (
       <div>
-      <HeaderEditor />
+      <HeaderEditor saveDocument={() => this.saveDocument()} editToggle={() => this.props.editToggle()} title={this.props.document.title} />
       <div id="buttonWrapper">
         <Button variant="outlined" style={{fontWeight: "bold"}} onMouseDown={(e) => this._onBoldClick(e)}>BOLD</Button>
         <Button variant="outlined" style={{fontStyle: "italic"}} onMouseDown={(e) => this._onItalicClick(e)}>ITALIC</Button>

@@ -19,13 +19,13 @@ class HeaderEditor extends React.Component {
             <MenuIcon />
           </IconButton>
           <Typography variant="title" color="inherit">
-            Document Editor (We will display the document name here...)
+            {this.props.title}
           </Typography>
           <div style={{position: "absolute", right: 0}}>
-          <Button color="inherit" style={{marginLeft: "150px"}}>
+          <Button onClick={() => this.props.saveDocument()} color="inherit" style={{marginLeft: "150px"}}>
             <SaveIcon /> Save
           </Button>
-          <Button color="inherit" style={{marginLeft: "150px"}}>
+          <Button onClick={() => this.props.editToggle()} color="inherit" style={{marginLeft: "150px"}}>
             <FolderIcon /> My Documents
           </Button>
           <Button color="inherit" style={{marginLeft: "20px"}}>
