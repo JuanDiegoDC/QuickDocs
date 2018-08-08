@@ -10,7 +10,7 @@ export default class App extends React.Component {
     super(props);
     this.state = {
       loggedIn: false,
-      register: false
+      register: false,
     }
   }
 
@@ -36,15 +36,14 @@ export default class App extends React.Component {
   render(){
     return(
       <div>
-        {/* {this.state.loggedIn ?
+        * {this.state.loggedIn ?
           <DocumentPortal />
           :
           this.state.register ?
           <RegisterForm register={() => this.register()} />
           :
           <LoginForm register={() => this.register()} login={() => this.login()} logout={() => this.logout()} />
-         } */}
-         <TextEditor />
+         }
       </div>
     )
   }

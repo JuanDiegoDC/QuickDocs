@@ -2,17 +2,30 @@ var app = require('express')();
 var server = require('http').Server(app);
 var path = require("path");
 var io = require('socket.io')(server);
+import express from "express";
 import mongoose from "mongoose";
 import User from "./User.js";
 import Document from "./Document.js";
 import bodyParser from "body-parser";
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
-
+var session = require('express-session');
+var MongoDBStore = require('connect-mongodb-session')(session);
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
-
+var cookieParser = require('cookie-parser');
 app.use(bodyParser.json());
+var store = new MongoDBStore({
+  uri: process.env.MONGODB_URI,
+  collection: "sessions"
+})
+app.use(session({
+  secret: process.env.SECRET,
+  store: store
+}));
+
+app.use(express.static(path.join(__dirname)));
+app.use(cookieParser());
 
 mongoose.connect(process.env.MONGODB_URI, {useNewUrlParser: true}, (error) => {
   if(error){
@@ -26,7 +39,6 @@ mongoose.connect(process.env.MONGODB_URI, {useNewUrlParser: true}, (error) => {
 // set passport middleware to first try local strategy
 passport.use(new LocalStrategy(
   function(username, password, done) {
-    console.log("Called!");
     User.findOne({ username: username }, function (err, user) {
       if (err) { return done(err); }
       if (!user) {
@@ -58,6 +70,7 @@ passport.deserializeUser(function(id, done) {
 // connect passport to express via express middleware
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(express.session());
 
 app.post("/register", (req, res) => {
   const {username, password, passwordconfirm, email} = req.body;
@@ -128,63 +141,66 @@ function(req, res, next) {
   })(req, res, next);
 });
 
-app.post("/create/document", (req, res) => {
-  const {title, password, content} = req.body;
-  const owner = "5b6a1ccb925dab234ca25f15";
-  if (title && password && content) {
-    const newDoc = new Document({
-      title: title,
-      password: password,
-      owner: owner,
-      collaborators: [owner],
-      content: content
-    });
-    newDoc.save()
-    .then((doc) => {
-      if (!doc) {
-        res.json({
-          error: "Failed to save document"
-        });
-      }
-      else {
-        res.json({
-          success: true
-        });
-      }
-    });
-  }
-});
-
-  app.use("/", (req, res, next) => {
-    console.log(req.user);
-    if (req.user) {
-      return next();
+  app.post("/create/document", (req, res) => {
+    if (!req.user) {
+      res.json({
+        error: "unauthorized"
+      });
     }
     else {
+      const {title, password, content} = req.body;
+      const owner = "5b6a1ccb925dab234ca25f15";
+      if (title && password && content) {
+        const newDoc = new Document({
+          title: title,
+          password: password,
+          owner: owner,
+          collaborators: [owner],
+          content: content
+        });
+        newDoc.save()
+        .then((doc) => {
+          if (!doc) {
+            res.json({
+              error: "Failed to save document"
+            });
+          }
+          else {
+            res.json({
+              success: true
+            });
+          }
+        });
+      }
+    }
+  });
+
+  app.get("/documents", (req, res) => {
+    if (!req.user) {
       res.json({
         error: "Unauthorized"
       });
     }
+    else {
+      console.log("Get documents is called!");
+      console.log("reg.user:", req.user);
+      console.log("Session:", req.session);
+      Document.find({}, (error, docs) => {
+        if (error){
+          console.log(error);
+        }
+        res.json({
+          success: true,
+          docs: docs
+        });
+      });
+    }
   });
-
-  //EVERYTHING BELOW HERE MUST BE AUTHORIZED
 
   app.get("/logout", (req, res) => {
     req.logout();
     res.json({
       success: true
-    });
-  });
-
-  app.get("/documents", (req, res) => {
-    Document.find({collaborator: req.user}, (error, docs) => {
-      if (error){
-        console.log(error);
-      }
-      res.json({
-        success: true,
-        docs: docs
-      });
     });
   });
 
