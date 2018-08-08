@@ -36,7 +36,7 @@ export default class App extends React.Component {
   render(){
     return(
       <div>
-        * {this.state.loggedIn ?
+        {this.state.loggedIn ?
           <DocumentPortal />
           :
           this.state.register ?

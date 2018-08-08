@@ -3,7 +3,7 @@ import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
 import axios from "axios";
 const url = "http://localhost:8080";
 import { AppBar, Button, TextField, Card, CardHeader, Divider, Tabs, Tab, Typography } from '@material-ui/core';
-import createMuiTheme from './theme'
+import createMuiTheme from './theme';
 
 export default class LoginForm extends React.Component {
 constructor(props){

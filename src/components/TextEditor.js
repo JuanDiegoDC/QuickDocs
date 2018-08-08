@@ -14,6 +14,7 @@ import SizeMenu from "./SizeMenu.js";
 import AlignMenu from "./AlignMenu.js";
 import createStyles from 'draft-js-custom-styles';
 import { Map } from 'immutable';
+import HeaderEditor from './layouts/HeaderEditor';
 
 // Initializing editor text transformation variables
 
@@ -153,8 +154,9 @@ export default class TextEditor extends React.Component {
       textAlign: this.state.textAlign
     }
 
-    return (<div>
-      <h1>Welcome to this editor!</h1>
+    return (
+      <div>
+      <HeaderEditor />
       <div id="buttonWrapper">
         <Button variant="outlined" style={{fontWeight: "bold"}} onMouseDown={(e) => this._onBoldClick(e)}>BOLD</Button>
         <Button variant="outlined" style={{fontStyle: "italic"}} onMouseDown={(e) => this._onItalicClick(e)}>ITALIC</Button>
