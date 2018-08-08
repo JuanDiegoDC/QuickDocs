@@ -12,7 +12,9 @@ class DocumentPortal extends React.Component {
       documents: [],
       isEditing: false,
       dialogOpen: false,
-      editingDocument: null
+      editingDocument: null,
+      title: "Untitled",
+      password: ""
     }
   }
 
@@ -43,19 +45,24 @@ class DocumentPortal extends React.Component {
    })
   }
 
+  editToggle(){
+    this.setState({
+      isEditing: !this.state.isEditing
+    });
+  }
 
-
-  editToggle() {
+  createDocument() {
+    console.log("Create document is called");
     fetch(url + '/create/document', {
      method: 'POST',
      credentials: "same-origin",
      headers: {
        'Content-Type': 'application/json',
      },
-     body: {
+     body: JSON.stringify({
        title: this.state.title,
        password: this.state.password
-     }
+     })
    })
    .then((res) => {console.log(res); if(res.status !== 200) {
      return res.text();
@@ -66,6 +73,9 @@ class DocumentPortal extends React.Component {
      console.log(resJson);
      if (resJson.success) {
        console.log("Finished creating document");
+     }
+     else {
+       console.log("Did not create document");
      }
    })
    .then(() => {
@@ -84,24 +94,18 @@ class DocumentPortal extends React.Component {
     .then((resJson) => {
       console.log(resJson);
       if (resJson.success) {
-        console.log("Success is true");
+        console.log("Finished getting document from database");
         this.setState({
           documents: resJson.docs
         });
+        let event = null;
+        this.editDocument(event, resJson.id)
       }
     })
    })
    .catch((err) => {
      console.log(err);
    })
-
-    console.log("Toggle called");
-    this.setState({
-      isEditing: !this.state.isEditing,
-      editingDocument: {title: "untitled"}
-    }, () => {
-      console.log(this.state);
-    });
   }
 
   editDocument(event, id) {
@@ -130,7 +134,7 @@ class DocumentPortal extends React.Component {
           <TextEditor editToggle={() => this.editToggle()} document={this.state.editingDocument} />
           :
           <div style={{minWidth: "600px"}}>
-          <Header editToggle={() => this.editToggle()} />
+          <Header createDocument={() => this.createDocument()} />
           <Card style={{margin: '20px'}}>
             <Table>
             <TableHead>

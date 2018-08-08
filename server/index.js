@@ -142,6 +142,7 @@ function(req, res, next) {
 });
 
   app.post("/create/document", (req, res) => {
+    console.log("Create document called");
     if (!req.user) {
       res.json({
         error: "unauthorized"
@@ -149,16 +150,21 @@ function(req, res, next) {
     }
     else {
       const {title, password} = req.body;
+      console.log(title, password);
       const owner = req.user._id;
       if (title && password) {
+        console.log("Here!");
         const newDoc = new Document({
           title: title,
           password: password,
           owner: owner,
           collaborators: [owner],
+          content: {test: "123"}
         });
         newDoc.save()
         .then((doc) => {
+          console.log("Save called");
+          console.log("doc:", doc);
           if (!doc) {
             res.json({
               error: "Failed to save document"
@@ -166,10 +172,16 @@ function(req, res, next) {
           }
           else {
             res.json({
-              success: true
+              success: true,
+              id: doc._id
             });
           }
         });
+      }
+      else {
+        res.json({
+          error: "Missing parameters"
+        })
       }
     }
   });
@@ -236,10 +248,11 @@ function(req, res, next) {
     }
     else {
       const {content, id} = req.body;
+      console.log(content, id);
       Document.findOneAndUpdate(id, {content: content})
-        .then((error) => {
-          if (error) {
-            console.log(error);
+        .then((doc) => {
+          console.log(doc);
+          if (!doc) {
             res.json({
               error: "Could not save"
             });
