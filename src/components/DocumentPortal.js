@@ -10,7 +10,8 @@ class DocumentPortal extends React.Component {
     super(props);
     this.state = {
       documents: [],
-      isEditing: false
+      isEditing: false,
+      dialogOpen: false
     }
   }
 
@@ -47,6 +48,12 @@ class DocumentPortal extends React.Component {
     });
   }
 
+  toggleDialog(){
+    this.setState({
+      dialogOpen: !this.state.dialogOpen
+    });
+  }
+
   render(){
     return(
       <div>
@@ -72,7 +79,39 @@ class DocumentPortal extends React.Component {
                       {n.title}
                     </TableCell>
                     <TableCell >{n.owner}</TableCell>
-                    <TableCell><Button onClick={() => this.editToggle()} variant="extendedFab">edit</Button></TableCell>
+                    <TableCell>
+                      <Button onClick={() => this.toggleDialog()} variant="extendedFab">
+                        edit
+                          <Dialog
+                        title="Dialog With Actions"
+                        open={this.state.dialogOpen}
+                        onClose={this.toggleDialog}
+                          >
+                          <DialogTitle id="form-dialog-title"> Access (document name)</DialogTitle>
+                          <DialogContent>
+                            <DialogContentText>
+                              Please enter (insert document name here)'s password:
+                            </DialogContentText>
+                            <TextField
+                          autoFocus
+                          margin="dense"
+                          id="docPassword"
+                          label="Password"
+                          type="password"
+                          fullWidth
+                            />
+                          </DialogContent>
+                          <DialogActions>
+                            <Button onClick={() => this.toggleDialog()} color="primary">
+                              Cancel
+                            </Button>
+                            <Button color="primary">
+                              Submit
+                            </Button>
+                          </DialogActions>
+                        </Dialog>
+                      </Button>
+                    </TableCell>
                   </TableRow>
                 );
               })}
