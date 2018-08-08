@@ -149,7 +149,7 @@ function(req, res, next) {
     }
     else {
       const {title, password, content} = req.body;
-      const owner = "5b6a1ccb925dab234ca25f15";
+      const owner = req.user._id;
       if (title && password && content) {
         const newDoc = new Document({
           title: title,

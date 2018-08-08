@@ -42,15 +42,27 @@ class DocumentPortal extends React.Component {
    })
   }
 
+
+
   editToggle() {
+    console.log("Toggle called");
     this.setState({
-      isEditing: !this.state.editing
+      isEditing: !this.state.isEditing
+    }, () => {
+      console.log(this.state);
     });
   }
 
-  editDocument() {
+  editDocument(event, id) {
+    let doc = {};
+    this.state.documents.forEach((item) => {
+      if (item._id === id) {
+        doc = item;
+      }
+    });
     this.setState({
-      isEditing: !this.state.editing
+      isEditing: !this.state.isEditing,
+      editingDocument: doc
     });
   }
 
@@ -58,7 +70,7 @@ class DocumentPortal extends React.Component {
     return(
       <div>
         {this.state.isEditing ?
-          <TextEditor />
+          <TextEditor editToggle={() => this.editToggle()} document={this.state.editingDocument} />
           :
           <div style={{minWidth: "600px"}}>
           <Header editToggle={() => this.editToggle()} />
@@ -79,7 +91,7 @@ class DocumentPortal extends React.Component {
                       {n.title}
                     </TableCell>
                     <TableCell >{n.owner}</TableCell>
-                    <TableCell><Button onClick={() => this.editToggle()} variant="extendedFab">edit</Button></TableCell>
+                    <TableCell><Button onClick={() => this.editDocument(event, n._id)} variant="extendedFab">edit</Button></TableCell>
                   </TableRow>
                 );
               })}
