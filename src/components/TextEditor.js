@@ -1,13 +1,38 @@
 import React from 'react';
-import Button from '@material-ui/core/Button';
 import io from "socket.io-client";
-import {Editor, EditorState, RichUtils, convertToRaw} from 'draft-js';
+import { Editor,
+  EditorState,
+  RichUtils,
+  convertToRaw,
+  DefaultDraftBlockRenderMap
+} from 'draft-js';
 import PropTypes from 'prop-types';
 import { GithubPicker } from 'react-color';
+import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
-import SizeMenu from "./components/SizeMenu.js";
-import AlignMenu from "./components/AlignMenu.js";
+import SizeMenu from "./SizeMenu.js";
+import AlignMenu from "./AlignMenu.js";
 import createStyles from 'draft-js-custom-styles';
+import { Map } from 'immutable';
+
+// Initializing editor text transformation variables
+
+const blockRenderMap = DefaultDraftBlockRenderMap.merge(new Map({
+  left: {
+    wrapper: <div style={{textAlign: 'left'}} />,
+  },
+  center: {
+    wrapper: <div style={{textAlign: 'center'}} />,
+  },
+  right: {
+    wrapper: <div style={{textAlign: 'right'}} />,
+  },
+  justify: {
+    wrapper: <div style={{textAlign: 'justify'}} />,
+  },
+}));
+
+const colors = ['#fff', '#000', '#B80000', '#DB3E00', '#FCCB00', '#008B02', '#006B76', '#1273DE'];
 
 export default class TextEditor extends React.Component {
   constructor(props) {
@@ -78,36 +103,41 @@ export default class TextEditor extends React.Component {
     this.onChange(RichUtils.toggleBlockType(this.state.editorState, 'ordered-list-item'))
   }
 
-
-  handleColorChange(color, e) {
+  _onAlignClick(e, align){
+    console.log(align);
     e.preventDefault();
-    console.log(color);
+    this.onChange(RichUtils.toggleBlockType(this.state.editorState, align))
+  }
+
+  _onFontClick(val){
+    console.log(val)
+    const newInlineStyles = Object.assign(
+      {},
+      this.state.inlineStyles,
+      { [val]: { fontSize: `${val}px` } }
+    );
+    console.log(newInlineStyles)
     this.setState({
-      editorColor: color.hex,
-      showColorPicker: false
-    });
-    console.log(this.state.editorColor);
+      inlineStyles: newInlineStyles,
+      editorState: RichUtils.toggleInlineStyle(this.state.editorState, val),
+      fontSize: val
+    })
   }
 
-  toggleAlignment(e){
+  handleColorChange(color, e){
+    console.log(color)
     e.preventDefault();
-    console.log(e.target.value);
-    let x = e.target.value;
-    if (x === 0) {
-      this.state.textAlign = 'center';
-    } else if (x === 1) {
-      this.state.textAlign = 'right';
-    } else if (x === 2) {
-      this.state.textAlign = 'left';
-    }
-    console.log(this.state.textAlign);
+    const newInlineStyles = Object.assign(
+      {},
+      this.state.inlineStyles,
+      { [color.hex]: { color: color.hex } }
+    );
+    this.setState({
+      inlineStyles: newInlineStyles,
+      editorState: RichUtils.toggleInlineStyle(this.state.editorState, color.hex)
+    })
   }
 
-  addFontSize(size) {
-    console.log(size);
-    this.focus();
-    this.onChange(RichUtils.toggleInlineStyle(this.state.editorState, size));
-  };
 
   render() {
     const editorStyle = {
@@ -122,7 +152,7 @@ export default class TextEditor extends React.Component {
       textDecoration: this.state.textDecoration,
       textAlign: this.state.textAlign
     }
-    const colors = ['#fff', '#000', '#B80000', '#DB3E00', '#FCCB00', '#008B02', '#006B76', '#1273DE'];
+
     return (<div>
       <h1>Welcome to this editor!</h1>
       <div id="buttonWrapper">
@@ -130,8 +160,8 @@ export default class TextEditor extends React.Component {
         <Button variant="outlined" style={{fontStyle: "italic"}} onMouseDown={(e) => this._onItalicClick(e)}>ITALIC</Button>
         <Button variant="outlined" style={{textDecoration: "underline"}} onMouseDown={(e) => this._onUnderlineClick(e)}>UNDERLINE</Button>
         <Button variant="outlined" onMouseDown={(e) => this._onColorClick(e)}>COLOR</Button>
-        <SizeMenu setCurrentSize={(e) => this.toggleFontSize(e)} />
-        <AlignMenu setAlignment={(e) => this.toggleAlignment(e)} />
+        <SizeMenu setCurrentSize={(e) => this._onFontClick(e)} />
+        <AlignMenu setAlignment={(e, val) => this._onAlignClick(e, val)} />
         <Button variant="outlined" style={{textDecoration: 'underline'}} onMouseDown={(e) => this._onBulletedClick(e)}>BULLETED LIST</Button>
         <Button variant="outlined" style={{textDecoration: 'underline'}} onMouseDown={(e) => this._onNumberedClick(e)}>NUMBERED LIST</Button>
       </div>
@@ -139,7 +169,13 @@ export default class TextEditor extends React.Component {
         {this.state.showColorPicker ? <div style={{position: "absolute", left: "275px"}}><GithubPicker colors={colors} onChange={(color, e) => this.handleColorChange(color, e)}/></div> : <div></div>}
       </div>
       <div style={editorStyle}>
-        <Editor ref='editor' editorState={this.state.editorState} onChange={(editorState)=>this.onChange(editorState)}/>
+        <Editor
+          ref='editor'
+          editorState={this.state.editorState}
+          onChange={(editorState)=>this.onChange(editorState)}
+          customStyleMap={this.state.inlineStyles}
+          blockRenderMap={blockRenderMap}
+        />
       </div>
     </div>);
   }
