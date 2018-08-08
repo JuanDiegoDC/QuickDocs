@@ -39,6 +39,15 @@ const colors = ['#fff', '#000', '#B80000', '#DB3E00', '#FCCB00', '#008B02', '#00
 export default class TextEditor extends React.Component {
   constructor(props) {
     super(props);
+
+    // if (this.props.document) {
+    //   let doc = EditorState.createWithContent(this.props.document.content);
+    // }
+    // else {
+    //   let doc = EditorState.createEmpty();
+    // }
+    console.log(typeof this.props.document.content);
+    console.log(typeof doc);
     this.state = {
       editorState: EditorState.createEmpty(),
       showColorPicker: false,
@@ -147,17 +156,15 @@ export default class TextEditor extends React.Component {
 
   saveDocument(e) {
     e.preventDefault();
-    fetch(url + '/create/document', {
+    fetch(url + '/save/document', {
      method: 'POST',
      credentials: "same-origin",
      headers: {
        'Content-Type': 'application/json',
      },
-     body: {
-       title: "example",
+     body: JSON.stringify({
        content: this.state.editorState,
-       password: "123"
-     }
+     })
    })
    .then((res) => {console.log(res); if(res.status !== 200) {
      return res.text();

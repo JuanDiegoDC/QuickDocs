@@ -21,7 +21,7 @@ class Header extends React.Component {
             Documents Portal
           </Typography>
           <div style={{position: "absolute", right: 0}}>
-          <Button onClick={() => this.props.editToggle()} color="inherit" style={{marginLeft: "150px"}}>
+          <Button onClick={() => this.props.createDocument()} color="inherit" style={{marginLeft: "150px"}}>
             <CreateIcon /> Create Document
           </Button>
           <Button color="inherit" style={{marginLeft: "20px"}}>
