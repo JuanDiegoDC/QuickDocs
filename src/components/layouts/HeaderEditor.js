@@ -24,7 +24,7 @@ class HeaderEditor extends React.Component {
           <Button onClick={(e) => this.props.saveDocument(e)} color="inherit" style={{marginLeft: "150px"}}>
             <SaveIcon /> Save
           </Button>
-          <Button onClick={() => this.props.editToggle()} color="inherit" style={{marginLeft: "150px"}}>
+          <Button onClick={(e) => this.props.goBack(e)} color="inherit" style={{marginLeft: "150px"}}>
             <FolderIcon /> My Documents
           </Button>
           <Button color="inherit" style={{marginLeft: "20px"}}>

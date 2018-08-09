@@ -208,7 +208,7 @@ export default class TextEditor extends React.Component {
 
     return (
       <div>
-      <HeaderEditor saveDocument={(e) => this.saveDocument(e)} editToggle={() => this.props.editToggle()} title={this.props.document.title} />
+      <HeaderEditor goBack={(e)=>this.props.goBack(e)} saveDocument={(e) => this.saveDocument(e)} editToggle={() => this.props.editToggle()} title={this.props.document.title} />
       <div id="buttonWrapper">
         <Button variant="outlined" style={{fontWeight: "bold"}} onMouseDown={(e) => this._onBoldClick(e)}>BOLD</Button>
         <Button variant="outlined" style={{fontStyle: "italic"}} onMouseDown={(e) => this._onItalicClick(e)}>ITALIC</Button>

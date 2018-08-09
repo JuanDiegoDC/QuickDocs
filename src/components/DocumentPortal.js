@@ -55,6 +55,17 @@ class DocumentPortal extends React.Component {
     });
   }
 
+  goBack(e){
+    console.log('Go back is called1111!!!111!!');
+    this.setState({
+      isEditing: false,
+      editingDocument: null
+    }, () => {
+      console.log('callback!');
+      this.getDocuments();
+    });
+  }
+
   getDocuments() {
     fetch(url + '/documents', {
       method: 'GET',
@@ -72,7 +83,7 @@ class DocumentPortal extends React.Component {
     }).then((resJson) => {
       console.log(resJson);
       if (resJson.success) {
-        console.log("Success is true");
+        console.log("got documents!", resJson.docs);
         this.setState({documents: resJson.docs});
       }
     }).catch((err) => {
@@ -247,7 +258,7 @@ class DocumentPortal extends React.Component {
     return (<div>
       {
         this.state.isEditing
-          ? <TextEditor user={this.state.user} editToggle={() => this.editToggle()} getDocuments={() => this.getDocuments()} document={this.state.editingDocument}/>
+          ? <TextEditor user={this.state.user} goBack={(e)=>this.goBack(e)} editToggle={() => this.editToggle()} getDocuments={() => this.getDocuments()} document={this.state.editingDocument}/>
           : <div style={{
               minWidth: "600px"
             }}>
