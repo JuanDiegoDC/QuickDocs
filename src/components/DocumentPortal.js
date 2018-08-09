@@ -102,12 +102,10 @@ class DocumentPortal extends React.Component {
   }
 
   openCreateDocument() {
-    console.log("opened!!!")
     this.setState({dialogCreateOpen: true});
   }
 
   closeCreateDocument() {
-    console.log("closed!!!")
     this.setState({dialogCreateOpen: false});
   }
 
@@ -211,7 +209,6 @@ class DocumentPortal extends React.Component {
     })
     .then((resJson) => {
       if (resJson.success) {
-        console.log("Password is correct!");
         this.dialogClose();
         this.editDocument(docId);
       } else {
@@ -224,7 +221,6 @@ class DocumentPortal extends React.Component {
   }
 
   requestAccess(e, docId){
-    console.log(docId);
     fetch(url + '/access/document', {
       method: 'POST',
       credentials: "same-origin",
@@ -235,7 +231,6 @@ class DocumentPortal extends React.Component {
         docId: docId
       })
     }).then((res) => {
-      console.log(res);
       if (res.status !== 200) {
         return res.text();
       } else {
