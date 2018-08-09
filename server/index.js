@@ -246,7 +246,9 @@ function(req, res, next) {
           });
         }
         else {
-          console.log(doc)
+          console.log("Doc collabs before: ", doc.collaborators);
+          doc.collaborators.push(userId);
+          console.log("Doc collabs after:", doc.collaborators);
           if (String(password) === String(doc.password)) {
             Document.findByIdAndUpdate(docId, {collaborators: doc.collaborators}, (error) => {
               if (error) {
