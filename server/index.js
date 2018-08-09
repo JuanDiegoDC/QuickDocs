@@ -226,6 +226,7 @@ function(req, res, next) {
   });
 
   app.post("/add/collaborator", (req, res) => {
+    console.log('/add/collaborator')
     if (!req.user) {
       res.json({
         error: "Unauthorized"
@@ -235,6 +236,8 @@ function(req, res, next) {
       const userId = req.user._id;
       const password = req.body.password;
       const docId = req.body.docId;
+      console.log(password);
+      console.log(docId);
       Document.findById(docId, (error, doc) => {
         if (error){
           console.log(error);
@@ -243,8 +246,9 @@ function(req, res, next) {
           });
         }
         else {
-          if (password === doc.password) {
-            Document.findOneAndUpdate(docId, {collaborators: doc.collaborators}, (error) => {
+          console.log(doc)
+          if (String(password) === String(doc.password)) {
+            Document.findByIdAndUpdate(docId, {collaborators: doc.collaborators}, (error) => {
               if (error) {
                 console.log(error)
               }
@@ -264,6 +268,7 @@ function(req, res, next) {
   });
 
   app.post("/access/document", (req, res) => {
+    console.log('/access/document')
     if (!req.user) {
       res.json({
         error: "Unauthorized"
@@ -272,6 +277,7 @@ function(req, res, next) {
     else {
       const userId = req.user._id;
       const docId = req.body.docId;
+      console.log(userId, docId);
       Document.findById(docId, (error, doc) => {
         if(error) {
           console.log(error);

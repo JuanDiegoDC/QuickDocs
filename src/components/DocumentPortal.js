@@ -220,7 +220,8 @@ class DocumentPortal extends React.Component {
     })
   }
 
-  requestAccess(e, docId){
+  requestAccess(e){
+
     fetch(url + '/access/document', {
       method: 'POST',
       credentials: "same-origin",
@@ -228,7 +229,7 @@ class DocumentPortal extends React.Component {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        docId: docId
+        docId: e.target.value
       })
     }).then((res) => {
       if (res.status !== 200) {
@@ -240,7 +241,7 @@ class DocumentPortal extends React.Component {
       if (resJson.success){
         if (resJson.access) {
           console.log('Granted access to document!')
-          this.editDocument(docId);
+          this.editDocument(e.target.value);
         } else{
           this.dialogOpen()
         }
@@ -284,7 +285,7 @@ class DocumentPortal extends React.Component {
                         </TableCell>
                         <TableCell >{n.owner}</TableCell>
                         <TableCell>
-                          <Button onClick={(e) => this.requestAccess(e, n._id)} variant="extendedFab">Edit</Button>
+                          <Button value={n._id} onClick={(e) => this.requestAccess(e)} variant="extendedFab">Edit</Button>
                             <Dialog title="Dialog With Actions" open={this.state.dialogOpen}>
                               <DialogTitle id="form-dialog-title">
                                 Access (document name)</DialogTitle>
