@@ -37,7 +37,7 @@ constructor(props){
     console.log(resJson);
     if (resJson.success) {
       console.log("Success is true");
-      this.props.login();
+      this.props.login(this.state.username);
     }
   })
   .catch((err) => {
@@ -78,7 +78,7 @@ render() {
                <br/>
              <Divider />
             <div >
-               <Button color="primary" style={{margin: 15}} onClick={(event) => this.login(event)}>SUBMIT</Button>
+               <Button color="primary" style={{margin: 15}} onClick={(event) => this.login(event)} >SUBMIT</Button>
                <Button color="primary" style={{margin: 15}} onClick={(event) => this.props.register(event)}>REGISTER</Button>
             </div>
          </div>

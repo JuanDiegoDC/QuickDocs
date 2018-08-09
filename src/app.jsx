@@ -4,20 +4,23 @@ import RegisterForm from './components/RegisterForm';
 import DocumentPortal from './components/DocumentPortal';
 import TextEditor from './components/TextEditor';
 
-
 export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       loggedIn: false,
       register: false,
+      socket: null,
+      user: ''
     }
   }
 
-  login(){
-    console.log("Login called");
+
+  login(user){
+    console.log(user, "has logged in!");
     this.setState({
-      loggedIn: true
+      loggedIn: true,
+      user: user
     });
   }
 
@@ -37,12 +40,12 @@ export default class App extends React.Component {
     return(
       <div>
         {this.state.loggedIn ?
-          <DocumentPortal />
+          <DocumentPortal user={this.state.username}/>
           :
           this.state.register ?
           <RegisterForm register={() => this.register()} />
           :
-          <LoginForm register={() => this.register()} login={() => this.login()} logout={() => this.logout()} />
+          <LoginForm register={() => this.register()} login={(user) => this.login(user)} logout={() => this.logout()} />
          }
       </div>
     )

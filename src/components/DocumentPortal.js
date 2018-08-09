@@ -14,7 +14,8 @@ class DocumentPortal extends React.Component {
       dialogOpen: false,
       editingDocument: null,
       title: "Untitled",
-      password: "asdsdasd"
+      password: "asdsdasd",
+      user: this.props.user
     }
   }
 
@@ -132,7 +133,7 @@ class DocumentPortal extends React.Component {
     return(
       <div>
         {this.state.isEditing ?
-          <TextEditor editToggle={() => this.editToggle()} document={this.state.editingDocument} />
+          <TextEditor user={this.state.user} editToggle={() => this.editToggle()} document={this.state.editingDocument} />
           :
           <div style={{minWidth: "600px"}}>
           <Header createDocument={() => this.createDocument()} />

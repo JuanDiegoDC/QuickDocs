@@ -14,7 +14,7 @@ module.exports = (io) => {
         } if (doc.collaborators) {
           doc.collaborators.push(data.user)
         } else {
-          doc.collaborators = [data.user]
+          doc.collaborators = [data.user];
         }
         console.log(doc.collaborators)
       });

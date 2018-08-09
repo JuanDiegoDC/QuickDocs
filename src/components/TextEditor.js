@@ -51,7 +51,7 @@ export default class TextEditor extends React.Component {
       editorState: EditorState.createEmpty(),
       showColorPicker: false,
       editorColor: "black",
-      size: 50,
+      size: 20,
       fontWeight: 'normal',
       textDecoration: 'none',
       textAlign: 'left',
