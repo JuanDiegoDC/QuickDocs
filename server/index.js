@@ -323,6 +323,27 @@ function(req, res, next) {
             error: "Could not find document"
           });
         }
+        else {
+          if (String(req.user._id) === String(doc.owner)) {
+            Document.findByIdAndDelete(docId)
+              .then((error) => {
+                if(error) {
+                  console.log(error);
+                  res.json({
+                    error: "Could not delete document"
+                  });
+                }
+                else {
+                  success: true
+                }
+              })
+          }
+          else {
+            res.json({
+              error: "Unauthorized to delete document"
+            });
+          }
+        }
       });
     }
   });
