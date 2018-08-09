@@ -31,7 +31,8 @@ class DocumentPortal extends React.Component {
       editingDocument: null,
       user: this.props.user,
       docTitle: '',
-      docPass: ''
+      docPass: '',
+      docVerifyPass: ''
     }
   }
 
@@ -100,8 +101,7 @@ class DocumentPortal extends React.Component {
   }
 
   createDocument() {
-    console.log('Document name is: ', this.state.docTitle);
-    console.log('Document Password is: ', this.state.docPass);
+    this.closeCreateDocument();
     fetch(url + '/create/document', {
       method: 'POST',
       credentials: "same-origin",
@@ -172,6 +172,51 @@ class DocumentPortal extends React.Component {
     });
   }
 
+  changeDocPass(e){
+    this.setState({
+      docVerifyPass: e.target.value
+    });
+  }
+
+  verificationDocPass(e, docId){
+    console.log(docId);
+
+  }
+
+  requestAccess(e, docId){
+    console.log(docId);
+    fetch(url + '/access/document', {
+      method: 'POST',
+      credentials: "same-origin",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        docId: docId
+      })
+    }).then((res) => {
+      console.log(res);
+      if (res.status !== 200) {
+        return res.text();
+      } else {
+        return res.json()
+      }
+    }).then((resJson) => {
+      console.log(resJson);
+      // if (resJson.success) {
+      //   console.log("Finished getting document from database", resJson);
+      //   this.setState({documents: resJson.docs});
+      //   let event = null;
+      //   this.editDocument(event, resJson.id)
+      // }
+    })
+    .catch((err) => {
+      if (err) {
+        console.log(err);
+      }
+    })
+  }
+
   render() {
     return (<div>
       {
@@ -201,7 +246,7 @@ class DocumentPortal extends React.Component {
                         </TableCell>
                         <TableCell >{n.owner}</TableCell>
                         <TableCell>
-                          <Button onClick={() => this.toggleDialog()} variant="extendedFab">Edit</Button>
+                          <Button onClick={(e) => this.requestAccess(e, n._id)} variant="extendedFab">Edit</Button>
                             <Dialog title="Dialog With Actions" open={this.state.dialogOpen}>
                               <DialogTitle id="form-dialog-title">
                                 Access (document name)</DialogTitle>
@@ -209,13 +254,13 @@ class DocumentPortal extends React.Component {
                                 <DialogContentText>
                                   Please enter (insert document name here)'s password:
                                 </DialogContentText>
-                                <TextField autoFocus margin="dense" id="docPassword" label="Password" type="password" fullWidth/>
+                                <TextField autoFocus margin="dense" id="docPassword" label="Password" type="password" onChange={(e)=>this.changeDocPass(e)} fullWidth/>
                               </DialogContent>
                               <DialogActions>
                                 <Button onClick={() => this.toggleDialog()} color="primary">
                                   Cancel
                                 </Button>
-                                <Button color="primary">
+                                <Button color="primary" onClick={(e) => this.verificationDocPass(e, n._id)}>
                                   Submit
                                 </Button>
                               </DialogActions>

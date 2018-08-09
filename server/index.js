@@ -280,6 +280,8 @@ function(req, res, next) {
     else {
       const userId = req.user._id;
       const docId = req.body.docId;
+      console.log(userId);
+      console.log(docId);
       Document.findOne(docId, (error, doc) => {
         if(error) {
           console.log(error);
