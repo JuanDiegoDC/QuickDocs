@@ -283,8 +283,8 @@ function(req, res, next) {
     else {
       const userId = req.user._id;
       const docId = req.body.docId;
-      console.log(userId);
-      console.log(docId);
+      console.log("User id:", userId);
+      console.log("Document id:", docId);
       Document.findById(docId, (error, doc) => {
         if(error) {
           console.log(error);
@@ -295,13 +295,32 @@ function(req, res, next) {
         else {
           let access = false;
           doc.collaborators.forEach((item) => {
-            if (item === userId) {
+            if (String(item) === String(userId)) {
               access = true;
             }
           });
           res.json({
             success: true,
             access: access
+          });
+        }
+      });
+    }
+  });
+
+  app.get("/delete/document/:id", (req, res) => {
+    if (!req.user) {
+      res.json({
+        error: "Unauthorized"
+      });
+    }
+    else {
+      const docId = req.params.id;
+      Document.findById(docId, (error, doc) => {
+        if(error){
+          console.log(error);
+          res.json({
+            error: "Could not find document"
           });
         }
       });
