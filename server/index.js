@@ -70,7 +70,6 @@ app.use(passport.session());
 
 app.post("/register", (req, res) => {
   const {username, password, passwordconfirm, email} = req.body;
-  console.log(username, password, email);
   if (password === passwordconfirm) {
     if (password && username && email) {
       bcrypt.hash(password, saltRounds).then(function(hash) {
@@ -112,9 +111,7 @@ app.get("/ping", (req, res) => {
 
 app.post('/login',
 function(req, res, next) {
-  console.log('before authenticate');
   passport.authenticate('local', function(err, user, info) {
-    console.log('authenticate callback', user);
     if (err) { return next(err);}
     if (!user) {
       return res.json({
@@ -122,7 +119,6 @@ function(req, res, next) {
       });
     }
     req.logIn(user, function(err) {
-      console.log("User:", user);
       if (err) {
         return res.json({
           error: err
@@ -138,7 +134,6 @@ function(req, res, next) {
 });
 
   app.post("/create/document", (req, res) => {
-    console.log("Create document called");
     if (!req.user) {
       res.json({
         error: "unauthorized"
@@ -149,18 +144,15 @@ function(req, res, next) {
       console.log(title, password);
       const owner = req.user._id;
       if (title && password) {
-        console.log("Here!");
         const newDoc = new Document({
           title: title,
           password: password,
           owner: owner,
           collaborators: [owner],
-          content: null
+          content: ""
         });
         newDoc.save()
         .then((doc) => {
-          console.log("Save called");
-          console.log("doc:", doc);
           if (!doc) {
             res.json({
               error: "Failed to save document"
@@ -214,9 +206,6 @@ function(req, res, next) {
       });
     }
     else {
-      console.log("Get documents is called!");
-      console.log("reg.user:", req.user);
-      console.log("Session:", req.session);
       Document.find({}, (error, docs) => {
         if (error){
           console.log(error);
@@ -255,9 +244,6 @@ function(req, res, next) {
         }
         else {
           if (password === doc.password) {
-            console.log(doc.collaborators);
-            doc.collaborators.push(userId);
-            console.log(doc.collaborators);
             Document.findOneAndUpdate(docId, {collaborators: doc.collaborators}, (error) => {
               if (error) {
                 console.log(error)
@@ -286,8 +272,6 @@ function(req, res, next) {
     else {
       const userId = req.user._id;
       const docId = req.body.docId;
-      console.log("User id:", userId);
-      console.log("Document id:", docId);
       Document.findById(docId, (error, doc) => {
         if(error) {
           console.log(error);
@@ -297,7 +281,6 @@ function(req, res, next) {
         }
         else {
           let access = false;
-          console.log('document is: ', doc)
           doc.collaborators.forEach((item) => {
             if (String(item) === String(userId)) {
               access = true;
@@ -360,16 +343,16 @@ function(req, res, next) {
     }
     else {
       const {content, id, inlineStyles} = req.body;
-      console.log(content, id);
-      Document.findOneAndUpdate(id, {content: content, inlineStyles: inlineStyles})
+      console.log("Save document, Content:", typeof content, "id: ", id, "inlineStyles:", inlineStyles);
+      Document.findByIdAndUpdate(id, {content: content, inlineStyles: inlineStyles})
         .then((doc) => {
-          console.log(doc);
           if (!doc) {
             res.json({
               error: "Could not save"
             });
           }
           else {
+            console.log("Saved doc:", doc);
             res.json({
               success: true,
               doc: doc

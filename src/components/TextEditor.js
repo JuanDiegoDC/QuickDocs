@@ -157,7 +157,7 @@ export default class TextEditor extends React.Component {
     })
   }
 
-  saveDocument(e) {
+  saveDocument(e, id) {
     e.preventDefault();
     let c = convertToRaw(this.state.editorState.getCurrentContent());
     console.log(c);
@@ -169,7 +169,8 @@ export default class TextEditor extends React.Component {
      },
      body: JSON.stringify({
        content: JSON.stringify(convertToRaw(this.state.editorState.getCurrentContent())),
-       inlineStyles: JSON.stringify(this.state.inlineStyles)
+       inlineStyles: JSON.stringify(this.state.inlineStyles),
+       id: id
      })
    })
    .then((res) => {console.log(res); if(res.status !== 200) {
@@ -208,7 +209,7 @@ export default class TextEditor extends React.Component {
 
     return (
       <div>
-      <HeaderEditor goBack={(e)=>this.props.goBack(e)} saveDocument={(e) => this.saveDocument(e)} editToggle={() => this.props.editToggle()} title={this.props.document.title} />
+      <HeaderEditor goBack={(e)=>this.props.goBack(e)} saveDocument={(e) => this.saveDocument(e, this.props.document._id)} editToggle={() => this.props.editToggle()} title={this.props.document.title} />
       <div id="buttonWrapper">
         <Button variant="outlined" style={{fontWeight: "bold"}} onMouseDown={(e) => this._onBoldClick(e)}>BOLD</Button>
         <Button variant="outlined" style={{fontStyle: "italic"}} onMouseDown={(e) => this._onItalicClick(e)}>ITALIC</Button>
