@@ -247,9 +247,9 @@ function(req, res, next) {
       });
     }
     else {
-      const {content, id} = req.body;
+      const {content, id, inlineStyles} = req.body;
       console.log(content, id);
-      Document.findOneAndUpdate(id, {content: content})
+      Document.findOneAndUpdate(id, {content: content, inlineStyles: inlineStyles})
         .then((doc) => {
           console.log(doc);
           if (!doc) {

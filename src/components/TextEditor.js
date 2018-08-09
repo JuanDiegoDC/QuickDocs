@@ -63,10 +63,11 @@ export default class TextEditor extends React.Component {
 
   componentDidMount() {
     console.log(this.props.document);
-    if (this.props.document.content) {
+    if (this.props.document.content || this.props.inlineStyles) {
       console.log("Component did mount log: ", this.props.document);
       this.setState({
-        editorState: EditorState.createWithContent(convertFromRaw(JSON.parse(this.props.document.content)))
+        editorState: EditorState.createWithContent(convertFromRaw(JSON.parse(this.props.document.content))),
+        inlineStyles: JSON.parse(this.props.document.inlineStyles),
       });
     }
     const socket = io('http://localhost:8080');
@@ -167,6 +168,7 @@ export default class TextEditor extends React.Component {
      },
      body: JSON.stringify({
        content: JSON.stringify(convertToRaw(this.state.editorState.getCurrentContent())),
+       inlineStyles: JSON.stringify(this.state.inlineStyles)
      })
    })
    .then((res) => {console.log(res); if(res.status !== 200) {

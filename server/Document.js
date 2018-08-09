@@ -22,6 +22,10 @@ const documentSchema = new Schema({
   content: {
     type: String,
     required: false
+  },
+  inlineStyles: {
+    type: String,
+    required: false
   }
 });
 
