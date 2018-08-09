@@ -12,11 +12,27 @@ class DocumentPortal extends React.Component {
       documents: [],
       isEditing: false,
       dialogOpen: false,
+      dialogCreateOpen: false,
       editingDocument: null,
-      title: "Untitled",
-      password: "asdsdasd",
-      user: this.props.user
+      user: this.props.user,
+      docTitle: '',
+      docPass: ''
     }
+  }
+
+  updatedocTitle(e){
+    console.log(e.target.value)
+    this.setState({
+      docTitle: e.target.value
+    }, () => {console.log(this.state)});
+
+  }
+
+  updateDocPass(e){
+    console.log(e.target.value)
+    this.setState({
+      docPass: e.target.value
+    }, () => {console.log(this.state)});
   }
 
   componentWillMount(){
@@ -52,8 +68,23 @@ class DocumentPortal extends React.Component {
     });
   }
 
+  openCreateDocument(){
+    console.log("opened!!!")
+    this.setState({
+      dialogCreateOpen: true
+    });
+  }
+
+  closeCreateDocument(){
+  console.log("closed!!!")
+  this.setState({
+    dialogCreateOpen: false
+  });
+}
+
   createDocument() {
-    console.log("Create document is called");
+    console.log('Document name is: ', this.state.docTitle);
+    console.log('Document Password is: ', this.state.docPass);
     fetch(url + '/create/document', {
      method: 'POST',
      credentials: "same-origin",
@@ -61,8 +92,8 @@ class DocumentPortal extends React.Component {
        'Content-Type': 'application/json',
      },
      body: JSON.stringify({
-       title: this.state.title,
-       password: this.state.password
+       title: this.state.docTitle,
+       password: this.state.docPass
      })
    })
    .then((res) => {console.log(res); if(res.status !== 200) {
@@ -136,7 +167,7 @@ class DocumentPortal extends React.Component {
           <TextEditor user={this.state.user} editToggle={() => this.editToggle()} document={this.state.editingDocument} />
           :
           <div style={{minWidth: "600px"}}>
-          <Header createDocument={() => this.createDocument()} />
+          <Header createDocument={(e) => this.createDocument(e)} updatedocTitle={(e)=>this.updatedocTitle(e)} updateDocPass={(e)=>this.updateDocPass(e)} openCreateDocument={() => this.openCreateDocument()} closeCreateDocument={() => this.closeCreateDocument()} dialogCreateOpen={this.state.dialogCreateOpen} />
           <Card style={{margin: '20px'}}>
             <Table>
             <TableHead>

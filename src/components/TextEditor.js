@@ -92,7 +92,7 @@ export default class TextEditor extends React.Component {
 
   _onBoldClick(e) {
     e.preventDefault()
-    this.onChange(RichUtils.toggleInlineStyle(this.state.editorState, 'size48'));
+    this.onChange(RichUtils.toggleInlineStyle(this.state.editorState, 'BOLD'));
   }
 
   _onItalicClick(e){
