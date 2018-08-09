@@ -32,7 +32,8 @@ class DocumentPortal extends React.Component {
       user: this.props.user,
       docTitle: '',
       docPass: '',
-      docVerifyPass: ''
+      docVerifyPass: '',
+      requestDocId: ""
     }
   }
 
@@ -172,15 +173,16 @@ class DocumentPortal extends React.Component {
     });
   }
 
-  dialogOpen() {
+  dialogOpen(docId) {
     this.setState({
-      dialogOpen: true
+      dialogOpen: true,
+      requestDocId: docId
     });
   }
 
   dialogClose(){
     this.setState({
-      dialogOpen: false
+      dialogOpen: false,
     })
   }
 
@@ -190,8 +192,8 @@ class DocumentPortal extends React.Component {
     });
   }
 
-  verificationDocPass(e, docId){
-    console.log(docId);
+  verificationDocPass(e){
+    console.log(this.state.requestDocId);
     fetch(url + '/add/collaborator', {
       method: 'POST',
       credentials: 'same-origin',
@@ -200,7 +202,7 @@ class DocumentPortal extends React.Component {
       },
       body: JSON.stringify({
         password: this.state.docVerifyPass,
-        docId: docId
+        docId: this.state.requestDocId
       })
     })
     .then((res) => {
@@ -210,7 +212,10 @@ class DocumentPortal extends React.Component {
     .then((resJson) => {
       if (resJson.success) {
         this.dialogClose();
-        this.editDocument(docId);
+        this.editDocument(this.state.requestDocId);
+        this.setState({
+          requestDocId: ""
+        });
       } else {
         console.log(resJson.error)
       }
@@ -220,8 +225,8 @@ class DocumentPortal extends React.Component {
     })
   }
 
-  requestAccess(e){
-
+  requestAccess(e, docId){
+    console.log(docId);
     fetch(url + '/access/document', {
       method: 'POST',
       credentials: "same-origin",
@@ -229,7 +234,7 @@ class DocumentPortal extends React.Component {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        docId: e.target.value
+        docId: docId
       })
     }).then((res) => {
       if (res.status !== 200) {
@@ -241,9 +246,9 @@ class DocumentPortal extends React.Component {
       if (resJson.success){
         if (resJson.access) {
           console.log('Granted access to document!')
-          this.editDocument(e.target.value);
+          this.editDocument(docId);
         } else{
-          this.dialogOpen()
+          this.dialogOpen(docId);
         }
       } else {
         console.log(resJson.error)
@@ -285,7 +290,7 @@ class DocumentPortal extends React.Component {
                         </TableCell>
                         <TableCell >{n.owner}</TableCell>
                         <TableCell>
-                          <Button value={n._id} onClick={(e) => this.requestAccess(e)} variant="extendedFab">Edit</Button>
+                          <Button onClick={(e) => this.requestAccess(e, n._id)} variant="extendedFab">Edit</Button>
                             <Dialog title="Dialog With Actions" open={this.state.dialogOpen}>
                               <DialogTitle id="form-dialog-title">
                                 Access (document name)</DialogTitle>
@@ -299,7 +304,7 @@ class DocumentPortal extends React.Component {
                                 <Button onClick={() => this.dialogClose()} color="primary">
                                   Cancel
                                 </Button>
-                                <Button color="primary" onClick={(e) => this.verificationDocPass(e, n._id)}>
+                                <Button color="primary" onClick={(e) => this.verificationDocPass(e)}>
                                   Submit
                                 </Button>
                               </DialogActions>
