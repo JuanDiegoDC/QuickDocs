@@ -255,7 +255,10 @@ function(req, res, next) {
         }
         else {
           if (password === doc.password) {
-            Document.findOneAndUpdate(docId, {collaborators: doc.collaborators.concat(userId)}, (error) => {
+            console.log(doc.collaborators);
+            doc.collaborators.push(userId);
+            console.log(doc.collaborators);
+            Document.findOneAndUpdate(docId, {collaborators: doc.collaborators}, (error) => {
               if (error) {
                 console.log(error)
               }
