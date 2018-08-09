@@ -174,10 +174,16 @@ class DocumentPortal extends React.Component {
     });
   }
 
-  toggleDialog() {
+  dialogOpen() {
     this.setState({
-      dialogOpen: !this.state.dialogOpen
+      dialogOpen: true
     });
+  }
+
+  dialogClose(){
+    this.setState({
+      dialogOpen: false
+    })
   }
 
   changeDocPass(e){
@@ -206,8 +212,8 @@ class DocumentPortal extends React.Component {
     .then((resJson) => {
       if (resJson.success) {
         console.log("Password is correct!");
-        this.toggleDialog();
-        this.requestAccess(e, docId);
+        this.dialogClose();
+        this.editDocument(docId);
       } else {
         console.log(resJson.error)
       }
@@ -241,7 +247,7 @@ class DocumentPortal extends React.Component {
           console.log('Granted access to document!')
           this.editDocument(docId);
         } else{
-          this.toggleDialog()
+          this.dialogOpen()
         }
       } else {
         console.log(resJson.error)
@@ -294,7 +300,7 @@ class DocumentPortal extends React.Component {
                                 <TextField autoFocus margin="dense" id="docPassword" label="Password" type="password" onChange={(e)=>this.changeDocPass(e)} fullWidth/>
                               </DialogContent>
                               <DialogActions>
-                                <Button onClick={() => this.toggleDialog()} color="primary">
+                                <Button onClick={() => this.dialogClose()} color="primary">
                                   Cancel
                                 </Button>
                                 <Button color="primary" onClick={(e) => this.verificationDocPass(e, n._id)}>
