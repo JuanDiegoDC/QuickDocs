@@ -236,6 +236,73 @@ function(req, res, next) {
     });
   });
 
+  app.post("/add/collaborator", (req, res) => {
+    if (!req.user) {
+      res.json({
+        error: "Unauthorized"
+      });
+    }
+    else {
+      const userId = req.user._id;
+      const password = req.body.password;
+      const docId = req.body.docId;
+      Document.findOne(docId, (error, doc) => {
+        if (error){
+          console.log(error);
+        }
+        else {
+          if (password === doc.password) {
+            Document.findOneAndUpdate(docId, {collaborators: doc.collaborators.concat(userId)}, (error) => {
+              if (error) {
+                console.log(error)
+              }
+              res.json({
+                success: true
+              });
+            });
+          }
+          else {
+            res.json({
+              error: "Invalid password"
+            });
+          }
+        }
+      });
+    }
+  });
+
+  app.post("/access/document", (req, res) => {
+    if (!req.user) {
+      res.json({
+        error: "Unauthorized"
+      });
+    }
+    else {
+      const userId = req.user._id;
+      const docId = req.body.docId;
+      Document.findOne(docId, (error, doc) => {
+        if(error) {
+          console.log(error);
+          res.status(500).json({
+            error: "Could not retrieve document"
+          });
+        }
+        else {
+          let access = false;
+          doc.collaborators.forEach((item) => {
+            if (item === userId) {
+              access = true;
+            }
+          });
+          res.json({
+            success: true,
+            access: access
+          });
+        }
+      });
+    }
+  })
+
   app.post("/save/document", (req, res) => {
     if (!req.user) {
       res.json({
