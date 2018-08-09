@@ -19,7 +19,7 @@ class DocumentPortal extends React.Component {
     }
   }
 
-  componentWillMount(){
+  getDocuments() {
     fetch(url + '/documents', {
      method: 'GET',
      credentials: "same-origin",
@@ -44,6 +44,10 @@ class DocumentPortal extends React.Component {
    .catch((err) => {
      console.log(err);
    })
+  }
+
+  componentDidMount(){
+    this.getDocuments();
   }
 
   editToggle(){
@@ -133,7 +137,7 @@ class DocumentPortal extends React.Component {
     return(
       <div>
         {this.state.isEditing ?
-          <TextEditor user={this.state.user} editToggle={() => this.editToggle()} document={this.state.editingDocument} />
+          <TextEditor user={this.state.user} editToggle={() => this.editToggle()} getDocuments={() => this.getDocuments()} document={this.state.editingDocument} />
           :
           <div style={{minWidth: "600px"}}>
           <Header createDocument={() => this.createDocument()} />
