@@ -39,15 +39,6 @@ const colors = ['#fff', '#000', '#B80000', '#DB3E00', '#FCCB00', '#008B02', '#00
 export default class TextEditor extends React.Component {
   constructor(props) {
     super(props);
-
-    // if (this.props.document) {
-    //   let doc = EditorState.createWithContent(this.props.document.content);
-    // }
-    // else {
-    //   let doc = EditorState.createEmpty();
-    // }
-    console.log(typeof this.props.document.content);
-    console.log(typeof doc);
     this.state = {
       editorState: EditorState.createEmpty(),
       showColorPicker: false,
@@ -75,10 +66,11 @@ export default class TextEditor extends React.Component {
     socket.on('disconnect', function() {
       console.log('ws disconnect')
     });
-    socket.on('msg', function(data) {
-      console.log('ws msg:', data);
-      socket.emit('cmd', {foo: 123})
-    });
+    // socket.on('msg', function(data) {
+    //   console.log('ws msg:', data);
+    //   socket.emit('cmd', {foo: 123})
+    // });
+    socket.emit('joinRoom', { docId: this.props.document._id, user: this.props.user });
   }
 
   toggleFontSize = fontSize => {
@@ -156,15 +148,17 @@ export default class TextEditor extends React.Component {
 
   saveDocument(e) {
     e.preventDefault();
-    fetch(url + '/save/document', {
+    fetch(url + '/create/document', {
      method: 'POST',
      credentials: "same-origin",
      headers: {
        'Content-Type': 'application/json',
      },
-     body: JSON.stringify({
+     body: {
+       title: "example",
        content: this.state.editorState,
-     })
+       password: "123"
+     }
    })
    .then((res) => {console.log(res); if(res.status !== 200) {
      return res.text();
