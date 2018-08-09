@@ -152,17 +152,14 @@ class DocumentPortal extends React.Component {
     })
   }
 
-  editDocument(event, id) {
-    let doc = {};
+  editDocument(id) {
     this.state.documents.forEach((item) => {
       if (item._id === id) {
-        doc = item;
+        this.setState({
+          isEditing: true,
+          editingDocument: item
+        });
       }
-    });
-    console.log(doc);
-    this.setState({
-      isEditing: !this.state.isEditing,
-      editingDocument: doc
     });
   }
 
@@ -180,7 +177,33 @@ class DocumentPortal extends React.Component {
 
   verificationDocPass(e, docId){
     console.log(docId);
-
+    fetch(url + '/add/collaborator', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        password: this.state.docVerifyPass,
+        docId: docId
+      })
+    })
+    .then((res) => {
+      console.log(res)
+      return res.json();
+    })
+    .then((resJson) => {
+      if (resJson.success) {
+        console.log("Password is correct!");
+        this.toggleDialog();
+        this.requestAccess(e, docId);
+      } else {
+        console.log(resJson.error)
+      }
+    })
+    .catch((err) => {
+      console.log(err)
+    })
   }
 
   requestAccess(e, docId){
@@ -202,13 +225,16 @@ class DocumentPortal extends React.Component {
         return res.json()
       }
     }).then((resJson) => {
-      console.log(resJson);
-      // if (resJson.success) {
-      //   console.log("Finished getting document from database", resJson);
-      //   this.setState({documents: resJson.docs});
-      //   let event = null;
-      //   this.editDocument(event, resJson.id)
-      // }
+      if (resJson.success){
+        if (resJson.access) {
+          console.log('Granted access to document!')
+          this.editDocument(docId);
+        } else{
+          this.toggleDialog()
+        }
+      } else {
+        console.log(resJson.error)
+      }
     })
     .catch((err) => {
       if (err) {

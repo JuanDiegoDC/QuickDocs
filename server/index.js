@@ -294,6 +294,7 @@ function(req, res, next) {
         }
         else {
           let access = false;
+          console.log('document is: ', doc)
           doc.collaborators.forEach((item) => {
             if (String(item) === String(userId)) {
               access = true;
