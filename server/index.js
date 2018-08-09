@@ -246,9 +246,12 @@ function(req, res, next) {
       const userId = req.user._id;
       const password = req.body.password;
       const docId = req.body.docId;
-      Document.findOne(docId, (error, doc) => {
+      Document.findById(docId, (error, doc) => {
         if (error){
           console.log(error);
+          res.json({
+            error: "Error finding document"
+          });
         }
         else {
           if (password === doc.password) {
@@ -282,7 +285,7 @@ function(req, res, next) {
       const docId = req.body.docId;
       console.log(userId);
       console.log(docId);
-      Document.findOne(docId, (error, doc) => {
+      Document.findById(docId, (error, doc) => {
         if(error) {
           console.log(error);
           res.status(500).json({
@@ -303,7 +306,7 @@ function(req, res, next) {
         }
       });
     }
-  })
+  });
 
   app.post("/save/document", (req, res) => {
     if (!req.user) {
