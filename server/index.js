@@ -159,7 +159,7 @@ function(req, res, next) {
           password: password,
           owner: owner,
           collaborators: [owner],
-          content: {test: "123"}
+          content: null
         });
         newDoc.save()
         .then((doc) => {
@@ -259,7 +259,8 @@ function(req, res, next) {
           }
           else {
             res.json({
-              success: true
+              success: true,
+              doc: doc
             });
           }
         });

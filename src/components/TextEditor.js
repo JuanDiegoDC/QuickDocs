@@ -4,7 +4,8 @@ import { Editor,
   EditorState,
   RichUtils,
   convertToRaw,
-  DefaultDraftBlockRenderMap
+  DefaultDraftBlockRenderMap,
+  convertFromRaw
 } from 'draft-js';
 import PropTypes from 'prop-types';
 import { GithubPicker } from 'react-color';
@@ -46,8 +47,6 @@ export default class TextEditor extends React.Component {
     // else {
     //   let doc = EditorState.createEmpty();
     // }
-    console.log(typeof this.props.document.content);
-    console.log(typeof doc);
     this.state = {
       editorState: EditorState.createEmpty(),
       showColorPicker: false,
@@ -63,9 +62,11 @@ export default class TextEditor extends React.Component {
   }
 
   componentDidMount() {
-    if (this.props.document) {
+    console.log(this.props.document);
+    if (this.props.document.content) {
+      console.log("Component did mount log: ", this.props.document);
       this.setState({
-        EditorState: this.props.document.content
+        editorState: EditorState.createWithContent(convertFromRaw(JSON.parse(this.props.document.content)))
       });
     }
     const socket = io('http://localhost:8080');
@@ -156,6 +157,8 @@ export default class TextEditor extends React.Component {
 
   saveDocument(e) {
     e.preventDefault();
+    let c = convertToRaw(this.state.editorState.getCurrentContent());
+    console.log(c);
     fetch(url + '/save/document', {
      method: 'POST',
      credentials: "same-origin",
@@ -163,7 +166,7 @@ export default class TextEditor extends React.Component {
        'Content-Type': 'application/json',
      },
      body: JSON.stringify({
-       content: this.state.editorState,
+       content: JSON.stringify(convertToRaw(this.state.editorState.getCurrentContent())),
      })
    })
    .then((res) => {console.log(res); if(res.status !== 200) {
@@ -172,7 +175,7 @@ export default class TextEditor extends React.Component {
      return res.json()
    }})
    .then((resJson) => {
-     console.log(resJson);
+     console.log(resJson.doc.content);
      if (resJson.success) {
        console.log("Success is true");
      }
