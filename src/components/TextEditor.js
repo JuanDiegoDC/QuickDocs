@@ -183,6 +183,9 @@ export default class TextEditor extends React.Component {
        console.log("Success is true");
      }
    })
+   .then(() => {
+     this.props.getDocuments();
+   })
    .catch((err) => {
      console.log(err);
    })
