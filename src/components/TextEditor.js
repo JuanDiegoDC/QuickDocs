@@ -4,7 +4,8 @@ import { Editor,
   EditorState,
   RichUtils,
   convertToRaw,
-  DefaultDraftBlockRenderMap
+  DefaultDraftBlockRenderMap,
+  convertFromRaw
 } from 'draft-js';
 import PropTypes from 'prop-types';
 import { GithubPicker } from 'react-color';
@@ -39,6 +40,13 @@ const colors = ['#fff', '#000', '#B80000', '#DB3E00', '#FCCB00', '#008B02', '#00
 export default class TextEditor extends React.Component {
   constructor(props) {
     super(props);
+
+    // if (this.props.document) {
+    //   let doc = EditorState.createWithContent(this.props.document.content);
+    // }
+    // else {
+    //   let doc = EditorState.createEmpty();
+    // }
     this.state = {
       editorState: EditorState.createEmpty(),
       showColorPicker: false,
@@ -54,9 +62,12 @@ export default class TextEditor extends React.Component {
   }
 
   componentDidMount() {
-    if (this.props.document) {
+    console.log(this.props.document);
+    if (this.props.document.content || this.props.inlineStyles) {
+      console.log("Component did mount log: ", this.props.document);
       this.setState({
-        EditorState: this.props.document.content
+        editorState: EditorState.createWithContent(convertFromRaw(JSON.parse(this.props.document.content))),
+        inlineStyles: JSON.parse(this.props.document.inlineStyles),
       });
     }
     const socket = io('http://localhost:8080');
@@ -148,17 +159,18 @@ export default class TextEditor extends React.Component {
 
   saveDocument(e) {
     e.preventDefault();
-    fetch(url + '/create/document', {
+    let c = convertToRaw(this.state.editorState.getCurrentContent());
+    console.log(c);
+    fetch(url + '/save/document', {
      method: 'POST',
      credentials: "same-origin",
      headers: {
        'Content-Type': 'application/json',
      },
-     body: {
-       title: "example",
-       content: this.state.editorState,
-       password: "123"
-     }
+     body: JSON.stringify({
+       content: JSON.stringify(convertToRaw(this.state.editorState.getCurrentContent())),
+       inlineStyles: JSON.stringify(this.state.inlineStyles)
+     })
    })
    .then((res) => {console.log(res); if(res.status !== 200) {
      return res.text();
@@ -166,7 +178,7 @@ export default class TextEditor extends React.Component {
      return res.json()
    }})
    .then((resJson) => {
-     console.log(resJson);
+     console.log(resJson.doc.content);
      if (resJson.success) {
        console.log("Success is true");
      }

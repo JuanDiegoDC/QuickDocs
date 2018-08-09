@@ -159,7 +159,7 @@ function(req, res, next) {
           password: password,
           owner: owner,
           collaborators: [owner],
-          content: {test: "123"}
+          content: null
         });
         newDoc.save()
         .then((doc) => {
@@ -247,9 +247,9 @@ function(req, res, next) {
       });
     }
     else {
-      const {content, id} = req.body;
+      const {content, id, inlineStyles} = req.body;
       console.log(content, id);
-      Document.findOneAndUpdate(id, {content: content})
+      Document.findOneAndUpdate(id, {content: content, inlineStyles: inlineStyles})
         .then((doc) => {
           console.log(doc);
           if (!doc) {
@@ -259,7 +259,8 @@ function(req, res, next) {
           }
           else {
             res.json({
-              success: true
+              success: true,
+              doc: doc
             });
           }
         });

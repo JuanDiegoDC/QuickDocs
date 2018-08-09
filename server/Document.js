@@ -20,7 +20,11 @@ const documentSchema = new Schema({
     required: true
   },
   content: {
-    type: Object,
+    type: String,
+    required: false
+  },
+  inlineStyles: {
+    type: String,
     required: false
   }
 });

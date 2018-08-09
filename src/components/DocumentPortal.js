@@ -14,7 +14,7 @@ class DocumentPortal extends React.Component {
       dialogOpen: false,
       editingDocument: null,
       title: "Untitled",
-      password: ""
+      password: "asdsdasd"
     }
   }
 
@@ -94,7 +94,7 @@ class DocumentPortal extends React.Component {
     .then((resJson) => {
       console.log(resJson);
       if (resJson.success) {
-        console.log("Finished getting document from database");
+        console.log("Finished getting document from database", resJson);
         this.setState({
           documents: resJson.docs
         });
@@ -115,6 +115,7 @@ class DocumentPortal extends React.Component {
         doc = item;
       }
     });
+    console.log(doc);
     this.setState({
       isEditing: !this.state.isEditing,
       editingDocument: doc
