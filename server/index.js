@@ -13,7 +13,6 @@ var session = require('express-session');
 var MongoDBStore = require('connect-mongodb-session')(session);
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
-var cookieParser = require('cookie-parser');
 app.use(bodyParser.json());
 var store = new MongoDBStore({
   uri: process.env.MONGODB_URI,
@@ -25,7 +24,6 @@ app.use(session({
 }));
 
 app.use(express.static(path.join(__dirname)));
-app.use(cookieParser());
 
 mongoose.connect(process.env.MONGODB_URI, {useNewUrlParser: true}, (error) => {
   if(error){
@@ -36,7 +34,6 @@ mongoose.connect(process.env.MONGODB_URI, {useNewUrlParser: true}, (error) => {
   }
 });
 
-// set passport middleware to first try local strategy
 passport.use(new LocalStrategy(
   function(username, password, done) {
     User.findOne({ username: username }, function (err, user) {
@@ -70,7 +67,6 @@ passport.deserializeUser(function(id, done) {
 // connect passport to express via express middleware
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(express.session());
 
 app.post("/register", (req, res) => {
   const {username, password, passwordconfirm, email} = req.body;

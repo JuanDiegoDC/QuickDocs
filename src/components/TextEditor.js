@@ -70,17 +70,17 @@ export default class TextEditor extends React.Component {
         inlineStyles: JSON.parse(this.props.document.inlineStyles),
       });
     }
-    const socket = io('http://localhost:8080');
+    const socket = io(url);
     socket.on('connect', function() {
       console.log('ws connect')
     });
     socket.on('disconnect', function() {
       console.log('ws disconnect')
     });
-    // socket.on('msg', function(data) {
-    //   console.log('ws msg:', data);
-    //   socket.emit('cmd', {foo: 123})
-    // });
+    socket.on('msg', function(data) {
+      console.log('ws msg:', data);
+      socket.emit('cmd', {foo: 123})
+    });
     socket.emit('joinRoom', { docId: this.props.document._id, user: this.props.user });
   }
 
