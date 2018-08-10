@@ -57,7 +57,8 @@ export default class TextEditor extends React.Component {
       textAlign: 'left',
     };
     this.focus = () => this.refs.editor.focus()
-
+    this.onTab = (e) => this._onTab(e)
+    this.handleKeyCommand = (command) => this._handleKeyCommand(command);
     this.updateEditorState = editorState => this.setState({ editorState });
   }
 
@@ -103,6 +104,21 @@ export default class TextEditor extends React.Component {
     });
   }
 
+  _handleKeyCommand(command) {
+    const {editorState} = this.state;
+    const newState = RichUtils.handleKeyCommand(editorState, command);
+    if (newState) {
+      this.onChange(newState);
+      return true;
+    }
+    return false;
+  }
+
+  _onTab(e) {
+    console.log('on tab called.')
+    const maxDepth = 10;
+    this.onChange(RichUtils.onTab(e, this.state.editorState, maxDepth));
+  }
 
 
   toggleFontSize = fontSize => {
@@ -251,6 +267,7 @@ export default class TextEditor extends React.Component {
           onChange={(editorState)=>this.onChange(editorState)}
           customStyleMap={this.state.inlineStyles}
           blockRenderMap={blockRenderMap}
+          onTab={(e) => this.onTab(e)}
         />
       </div>
     </div>);
