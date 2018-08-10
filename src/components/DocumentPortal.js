@@ -67,6 +67,33 @@ class DocumentPortal extends React.Component {
     });
   }
 
+  deleteDocument(id){
+    fetch(url + '/delete/document/' + String(id), {
+      method: 'GET',
+      credentials: "same-origin",
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then((res) => {
+      console.log(res);
+      if (res.status !== 200) {
+        return res.text();
+      } else {
+        return res.json()
+      }
+    }).then((resJson) => {
+      console.log(resJson);
+      if (resJson.success) {
+        console.log("Deleted document!", resJson.docs);
+      }
+    }).then(() => {
+      this.getDocuments();
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+  }
+
   getDocuments() {
     fetch(url + '/documents', {
       method: 'GET',

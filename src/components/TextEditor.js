@@ -79,7 +79,8 @@ export default class TextEditor extends React.Component {
       socket.emit('join', { docId: that.props.document._id });
       that.onChange = (editorState) => {
         that.setState({editorState});
-        console.log('editor changed', editorState)
+        let selectionState = that.state.editorState.getSelection();
+        console.log('AnchorKey::', selectionState.getStartOffset());
         socket.emit('editorChange', {
           content: JSON.stringify(convertToRaw(that.state.editorState.getCurrentContent())),
           inlineStyles: JSON.stringify(that.state.inlineStyles),
@@ -219,12 +220,12 @@ export default class TextEditor extends React.Component {
       minHeight: "100vh",
       padding: "10px",
       margin: "20px",
-      color: this.state.editorColor,
-      fontSize: this.state.size,
-      fontWeight: this.state.fontWeight,
-      fontStyle: this.state.fontStyle,
-      textDecoration: this.state.textDecoration,
-      textAlign: this.state.textAlign
+      // color: this.state.editorColor,
+      // fontSize: this.state.size,
+      // fontWeight: this.state.fontWeight,
+      // fontStyle: this.state.fontStyle,
+      // textDecoration: this.state.textDecoration,
+      // textAlign: this.state.textAlign
     }
 
     return (
