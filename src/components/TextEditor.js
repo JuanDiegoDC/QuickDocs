@@ -58,7 +58,7 @@ export default class TextEditor extends React.Component {
       user: this.props.user,
       inlineStyles: {
         "SELECTED": {
-          "backgroundColor": "red"
+          "backgroundColor": "#d1e2ff"
         }
       }
     };
@@ -70,6 +70,7 @@ export default class TextEditor extends React.Component {
 
   componentDidMount() {
     console.log(this.state);
+    console.log(this.props);
     this.onChange = (editorState) => this.setState({editorState});
     console.log(this.props.document);
     if (this.props.document.content) {
@@ -228,11 +229,11 @@ export default class TextEditor extends React.Component {
     })
   }
 
-  saveDocument(e, id) {
+  saveDocument(e) {
     e.preventDefault();
     let c = convertToRaw(this.state.editorState.getCurrentContent());
     console.log(c);
-    console.log("id: ", id);
+    console.log("id: ", this.props.document._id);
     fetch(url + '/save/document', {
      method: 'POST',
      credentials: "same-origin",
@@ -242,7 +243,7 @@ export default class TextEditor extends React.Component {
      body: JSON.stringify({
        content: JSON.stringify(convertToRaw(this.state.editorState.getCurrentContent())),
        inlineStyles: JSON.stringify(this.state.inlineStyles),
-       id: String(id)
+       id: this.props.document._id
      })
    })
    .then((res) => {console.log(res); if(res.status !== 200) {
