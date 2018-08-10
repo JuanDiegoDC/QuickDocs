@@ -13,8 +13,8 @@ import {
   TextField
 } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
-import CreateIcon from '@material-ui/icons/create';
-
+import CreateIcon from '@material-ui/icons/Create';
+import Refresh from '@material-ui/icons/Refresh';
 class Header extends React.Component {
   constructor(props) {
     super(props)
@@ -55,7 +55,7 @@ class Header extends React.Component {
             <Button onClick={() => this.props.openCreateDocument()} color="inherit" style={{
                 marginLeft: "150px"
               }}>
-              <CreateIcon/>
+              <CreateIcon/>{' '}
               Create Document
             </Button>
             <Dialog title="Dialog With Actions" open={this.props.dialogCreateOpen}>
@@ -82,6 +82,10 @@ class Header extends React.Component {
                 </Button>
               </DialogActions>
             </Dialog>
+            <Button color="inherit" onClick={(e) => this.props.getDocuments(e)}>
+              <Refresh />{' '}
+               REFRESH
+            </Button>
             <Button color="inherit" style={{
                 marginLeft: "20px"
               }}>

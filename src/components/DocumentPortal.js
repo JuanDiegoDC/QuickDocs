@@ -34,7 +34,8 @@ class DocumentPortal extends React.Component {
       docTitle: '',
       docPass: '',
       docVerifyPass: '',
-      requestDocId: ""
+      requestDocId: '',
+      docDeleteId: ''
     }
   }
 
@@ -68,8 +69,11 @@ class DocumentPortal extends React.Component {
     });
   }
 
-  deleteDocument(e, id){
+  deleteDocument(e){
+    console.log(this.state.docDeleteId)
+    let id = this.state.docDeleteId;
     e.preventDefault();
+    this.dialogDeleteClose(e);
     fetch(url + '/delete/document/' + String(id), {
       method: 'GET',
       credentials: "same-origin",
@@ -90,7 +94,7 @@ class DocumentPortal extends React.Component {
       }
     }).then(() => {
       this.getDocuments();
-      this.dialogDeleteClose();
+
     })
     .catch((err) => {
       console.log(err);
@@ -301,10 +305,11 @@ class DocumentPortal extends React.Component {
     })
   }
 
-  dialogDeleteOpen(e){
+  dialogDeleteOpen(e, docDeleteId){
     e.preventDefault();
     this.setState({
-      dialogDeleteOpen: true
+      dialogDeleteOpen: true,
+      docDeleteId: docDeleteId
     });
   }
 
@@ -323,7 +328,7 @@ class DocumentPortal extends React.Component {
           : <div style={{
               minWidth: "600px"
             }}>
-            <Header createDocument={(e) => this.createDocument(e)} updatedocTitle={(e) => this.updatedocTitle(e)} updateDocPass={(e) => this.updateDocPass(e)} openCreateDocument={() => this.openCreateDocument()} closeCreateDocument={() => this.closeCreateDocument()} dialogCreateOpen={this.state.dialogCreateOpen}/>
+            <Header getDocuments={(e) => this.getDocuments(e)} createDocument={(e) => this.createDocument(e)} updatedocTitle={(e) => this.updatedocTitle(e)} updateDocPass={(e) => this.updateDocPass(e)} openCreateDocument={() => this.openCreateDocument()} closeCreateDocument={() => this.closeCreateDocument()} dialogCreateOpen={this.state.dialogCreateOpen}/>
             <Card style={{
                 margin: '20px'
               }}>
@@ -367,7 +372,7 @@ class DocumentPortal extends React.Component {
                             </Dialog>
                         </TableCell>
                         <TableCell>
-                          <Button onClick={(e)=>this.dialogDeleteOpen(e)} variant="extendedFab"><Delete /></Button>
+                          <Button onClick={(e)=>this.dialogDeleteOpen(e, n._id)} variant="extendedFab"><Delete /></Button>
                             <Dialog
                               open={this.state.dialogDeleteOpen}
                               aria-labelledby="alert-dialog-title"
