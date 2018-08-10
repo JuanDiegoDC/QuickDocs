@@ -56,6 +56,7 @@ export default class TextEditor extends React.Component {
       textDecoration: 'none',
       textAlign: 'left',
       user: this.props.user,
+      socket: io(url),
       inlineStyles: {
         "SELECTED": {
           "backgroundColor": "#d1e2ff"
@@ -81,7 +82,7 @@ export default class TextEditor extends React.Component {
       });
     }
     console.log("Block map:", this.state.editorState.getCurrentContent().getBlockMap());
-    const socket = io(url);
+    const socket = this.state.socket;
     let that = this;
     socket.on('connect', function() {
       console.log('ws connect')
@@ -145,7 +146,15 @@ export default class TextEditor extends React.Component {
       that.setState({
         editorState: EditorState.createWithContent(convertFromRaw(currState)),
         inlineStyles: JSON.parse(data.inlineStyles),
+      }, () => {
+        that.forceUpdate();
       });
+    });
+  }
+
+  compoentWillUnmount() {
+    this.state.socket.emit("leave", {docId: this.props.document._id}, () => {
+      console.log("Left room");
     });
   }
 
@@ -282,7 +291,12 @@ export default class TextEditor extends React.Component {
 
     return (
       <div>
-      <HeaderEditor goBack={(e)=>this.props.goBack(e)} saveDocument={(e) => this.saveDocument(e, this.props.document._id)} editToggle={() => this.props.editToggle()} document={this.props.document} />
+      <HeaderEditor socket={this.state.socket}  goBack={(e)=>{
+        this.props.goBack(e); this.state.socket.emit("leave", {docId: this.props.document._id}, () => {
+        console.log("Left room");
+      });
+    }}
+    saveDocument={(e) => this.saveDocument(e, this.props.document._id)} editToggle={() => this.props.editToggle()} document={this.props.document} />
       <div id="buttonWrapper">
         <Button variant="outlined" style={{fontWeight: "bold"}} onMouseDown={(e) => this._onBoldClick(e)}>BOLD</Button>
         <Button variant="outlined" style={{fontStyle: "italic"}} onMouseDown={(e) => this._onItalicClick(e)}>ITALIC</Button>
