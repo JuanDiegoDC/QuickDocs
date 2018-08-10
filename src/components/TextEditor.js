@@ -73,6 +73,7 @@ export default class TextEditor extends React.Component {
         inlineStyles: JSON.parse(this.props.document.inlineStyles),
       });
     }
+    console.log("Block map:", this.state.editorState.getCurrentContent().getBlockMap());
     const socket = io(url);
     let that = this;
     socket.on('connect', function() {
@@ -81,7 +82,13 @@ export default class TextEditor extends React.Component {
       that.onChange = (editorState) => {
         that.setState({editorState});
         let selectionState = that.state.editorState.getSelection();
-        console.log('AnchorKey::', selectionState.getStartOffset());
+        let selectionData = {
+          anchorKey: selectionState.getAnchorKey(),
+          focusKey: selectionState.getFocusKey(),
+          length: Math.abs(selectionState.getAnchorOffset() - selectionState.getFocusOffset()),
+          offset: Math.min(selectionState.getAnchorOffset(), selectionState.getFocusOffset())
+        }
+        console.log("selectionData:", selectionData);
         socket.emit('editorChange', {
           content: JSON.stringify(convertToRaw(that.state.editorState.getCurrentContent())),
           inlineStyles: JSON.stringify(that.state.inlineStyles),

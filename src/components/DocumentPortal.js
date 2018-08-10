@@ -57,7 +57,7 @@ class DocumentPortal extends React.Component {
   }
 
   goBack(e){
-    console.log('Go back is called1111!!!111!!');
+    console.log('Go back is called!');
     this.setState({
       isEditing: false,
       editingDocument: null
