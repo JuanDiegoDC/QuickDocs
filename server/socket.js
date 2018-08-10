@@ -54,6 +54,7 @@ io.on('connection', (socket) => {
   })
 
   socket.on('editorChange', (data) => {
+    console.log('editor change', data);
     socket.broadcast.to(data.docId).emit('editorChange', data);
   })
 })

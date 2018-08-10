@@ -370,11 +370,29 @@ function(req, res, next) {
     }
   });
 
-io.on('connection', function (socket) {
-  socket.emit('msg', { hello: 'world' });
-  socket.on('cmd', function (data) {
-    console.log(data);
+  io.on('connection', (socket) => {
+    let documents = [];
+
+    socket.on('join', (data) => {
+      socket.join(data.docId);
+      console.log('Joined document.');
+      documents.push(data.docId);
+      console.log(documents);
+      })
+
+    socket.on('leave', (data) => {
+      documents.forEach((docId) => {
+        if (docId === data.docId) {
+          socket.leave(data.docId);
+          console.log('Left room.');
+        }
+      })
+    })
+
+    socket.on('editorChange', (data) => {
+      console.log('editor change', data);
+      socket.broadcast.to(data.docId).emit('editorChange', data);
+    })
   });
-});
 
 server.listen(8080);

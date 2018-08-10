@@ -79,12 +79,13 @@ export default class TextEditor extends React.Component {
       socket.emit('join', { docId: that.props.document._id });
       that.onChange = (editorState) => {
         that.setState({editorState});
+        console.log('editor changed', editorState)
         socket.emit('editorChange', {
           content: JSON.stringify(convertToRaw(that.state.editorState.getCurrentContent())),
           inlineStyles: JSON.stringify(that.state.inlineStyles),
           docId: that.props.document._id
         });
-        console.log('New Editor State!')};
+      };
     });
     socket.on('disconnect', function() {
       console.log('ws disconnect')
@@ -198,7 +199,7 @@ export default class TextEditor extends React.Component {
      return res.json()
    }})
    .then((resJson) => {
-     console.log(resJson.doc.content);
+     console.log(resJson);
      if (resJson.success) {
        console.log("Success is true");
      }
