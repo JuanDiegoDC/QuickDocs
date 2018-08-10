@@ -58,7 +58,7 @@ class DocumentPortal extends React.Component {
   }
 
   goBack(e){
-    console.log('Go back is called1111!!!111!!');
+    console.log('Go back is called!');
     this.setState({
       isEditing: false,
       editingDocument: null
@@ -66,6 +66,33 @@ class DocumentPortal extends React.Component {
       console.log('callback!');
       this.getDocuments();
     });
+  }
+
+  deleteDocument(id){
+    fetch(url + '/delete/document/' + String(id), {
+      method: 'GET',
+      credentials: "same-origin",
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then((res) => {
+      console.log(res);
+      if (res.status !== 200) {
+        return res.text();
+      } else {
+        return res.json()
+      }
+    }).then((resJson) => {
+      console.log(resJson);
+      if (resJson.success) {
+        console.log("Deleted document!", resJson.docs);
+      }
+    }).then(() => {
+      this.getDocuments();
+    })
+    .catch((err) => {
+      console.log(err);
+    })
   }
 
   getDocuments() {

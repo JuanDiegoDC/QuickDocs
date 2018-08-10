@@ -73,6 +73,7 @@ export default class TextEditor extends React.Component {
         inlineStyles: JSON.parse(this.props.document.inlineStyles),
       });
     }
+    console.log("Block map:", this.state.editorState.getCurrentContent().getBlockMap());
     const socket = io(url);
     let that = this;
     socket.on('connect', function() {
@@ -80,7 +81,14 @@ export default class TextEditor extends React.Component {
       socket.emit('join', { docId: that.props.document._id });
       that.onChange = (editorState) => {
         that.setState({editorState});
-        console.log('editor changed', editorState)
+        let selectionState = that.state.editorState.getSelection();
+        let selectionData = {
+          anchorKey: selectionState.getAnchorKey(),
+          focusKey: selectionState.getFocusKey(),
+          length: Math.abs(selectionState.getAnchorOffset() - selectionState.getFocusOffset()),
+          offset: Math.min(selectionState.getAnchorOffset(), selectionState.getFocusOffset())
+        }
+        console.log("selectionData:", selectionData);
         socket.emit('editorChange', {
           content: JSON.stringify(convertToRaw(that.state.editorState.getCurrentContent())),
           inlineStyles: JSON.stringify(that.state.inlineStyles),
@@ -95,11 +103,17 @@ export default class TextEditor extends React.Component {
     });
     socket.on('editorChange', function(data) {
       console.log('The EditorChange data is: ', data);
-      that.setState({
-        editorState: EditorState.createWithContent(convertFromRaw(JSON.parse(data.content))),
-        inlineStyles: JSON.parse(data.inlineStyles),
-      });
-
+      if (data.inlineStyles){
+        that.setState({
+          editorState: EditorState.createWithContent(convertFromRaw(JSON.parse(data.content))),
+          inlineStyles: JSON.parse(data.inlineStyles),
+        });
+      }
+      else {
+        that.setState({
+          editorState: EditorState.createWithContent(convertFromRaw(JSON.parse(data.content))),
+        });
+      }
     });
   }
 
