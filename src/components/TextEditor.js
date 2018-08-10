@@ -96,11 +96,17 @@ export default class TextEditor extends React.Component {
     });
     socket.on('editorChange', function(data) {
       console.log('The EditorChange data is: ', data);
-      that.setState({
-        editorState: EditorState.createWithContent(convertFromRaw(JSON.parse(data.content))),
-        inlineStyles: JSON.parse(data.inlineStyles),
-      });
-
+      if (data.inlineStyles){
+        that.setState({
+          editorState: EditorState.createWithContent(convertFromRaw(JSON.parse(data.content))),
+          inlineStyles: JSON.parse(data.inlineStyles),
+        });
+      }
+      else {
+        that.setState({
+          editorState: EditorState.createWithContent(convertFromRaw(JSON.parse(data.content))),
+        });
+      }
     });
   }
 
