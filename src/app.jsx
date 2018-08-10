@@ -17,7 +17,7 @@ export default class App extends React.Component {
 
 
   login(user){
-    console.log(user, "has logged in!");
+    console.log(user.username, "has logged in!");
     this.setState({
       loggedIn: true,
       user: user
@@ -40,7 +40,7 @@ export default class App extends React.Component {
     return(
       <div>
         {this.state.loggedIn ?
-          <DocumentPortal user={this.state.username}/>
+          <DocumentPortal user={this.state.user}/>
           :
           this.state.register ?
           <RegisterForm register={() => this.register()} />
