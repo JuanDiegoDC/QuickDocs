@@ -328,7 +328,7 @@ class DocumentPortal extends React.Component {
           : <div style={{
               minWidth: "600px"
             }}>
-            <Header createDocument={(e) => this.createDocument(e)} updatedocTitle={(e) => this.updatedocTitle(e)} updateDocPass={(e) => this.updateDocPass(e)} openCreateDocument={() => this.openCreateDocument()} closeCreateDocument={() => this.closeCreateDocument()} dialogCreateOpen={this.state.dialogCreateOpen}/>
+            <Header getDocuments={(e) => this.getDocuments(e)} createDocument={(e) => this.createDocument(e)} updatedocTitle={(e) => this.updatedocTitle(e)} updateDocPass={(e) => this.updateDocPass(e)} openCreateDocument={() => this.openCreateDocument()} closeCreateDocument={() => this.closeCreateDocument()} dialogCreateOpen={this.state.dialogCreateOpen}/>
             <Card style={{
                 margin: '20px'
               }}>
