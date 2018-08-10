@@ -283,6 +283,7 @@ class DocumentPortal extends React.Component {
             <Card style={{
                 margin: '20px'
               }}>
+              <div style={{maxHeight: '500px', overflow: 'auto'}}>
               <Table>
                 <TableHead>
                   <TableRow>
@@ -325,6 +326,7 @@ class DocumentPortal extends React.Component {
                   }
                   </TableBody>
               </Table>
+            </div>
             </Card>
           </div>
       }
