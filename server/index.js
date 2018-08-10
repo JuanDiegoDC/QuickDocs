@@ -126,7 +126,8 @@ function(req, res, next) {
       }
       else {
         res.json({
-          success: true
+          success: true,
+          user: user
         });
       }
     });
@@ -351,7 +352,7 @@ function(req, res, next) {
     }
     else {
       const {content, id, inlineStyles} = req.body;
-      console.log("Save document, Content:", typeof content, "id: ", id, "inlineStyles:", inlineStyles);
+      console.log("Save document, Content:", content, "id: ", id, "inlineStyles:", inlineStyles);
       Document.findByIdAndUpdate(id, {content: content, inlineStyles: inlineStyles})
         .then((doc) => {
           if (!doc) {

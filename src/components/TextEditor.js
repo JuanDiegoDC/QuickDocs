@@ -55,18 +55,24 @@ export default class TextEditor extends React.Component {
       fontWeight: 'normal',
       textDecoration: 'none',
       textAlign: 'left',
+      user: this.props.user,
+      inlineStyles: {
+        "SELECTED": {
+          "backgroundColor": "red"
+        }
+      }
     };
     this.focus = () => this.refs.editor.focus()
     this.onTab = (e) => this._onTab(e)
-    this.handleKeyCommand = (command) => this._handleKeyCommand(command);
     this.updateEditorState = editorState => this.setState({ editorState });
   }
 
 
   componentDidMount() {
+    console.log(this.state);
     this.onChange = (editorState) => this.setState({editorState});
     console.log(this.props.document);
-    if (this.props.document.content || this.props.inlineStyles) {
+    if (this.props.document.content) {
       console.log("Component did mount log: ", this.props.document);
       this.setState({
         editorState: EditorState.createWithContent(convertFromRaw(JSON.parse(this.props.document.content))),
@@ -82,17 +88,33 @@ export default class TextEditor extends React.Component {
       that.onChange = (editorState) => {
         that.setState({editorState});
         let selectionState = that.state.editorState.getSelection();
-        let selectionData = {
-          anchorKey: selectionState.getAnchorKey(),
-          focusKey: selectionState.getFocusKey(),
-          length: Math.abs(selectionState.getAnchorOffset() - selectionState.getFocusOffset()),
-          offset: Math.min(selectionState.getAnchorOffset(), selectionState.getFocusOffset())
+        let selectionData = {};
+        if (selectionState.getIsBackward()) {
+          //Focus is before Anchor
+          selectionData = {
+            startKey: selectionState.getFocusKey(),
+            endKey: selectionState.getAnchorKey(),
+            startOffset: selectionState.getFocusOffset(),
+            endOffset: selectionState.getAnchorOffset(),
+            id: that.state.user._id
+          }
+        }
+        else {
+          //Anchor is before Focus
+          selectionData = {
+            startKey: selectionState.getAnchorKey(),
+            endKey: selectionState.getFocusKey(),
+            startOffset: selectionState.getAnchorOffset(),
+            endOffset: selectionState.getFocusOffset(),
+            id: that.state.user._id
+          }
         }
         console.log("selectionData:", selectionData);
         socket.emit('editorChange', {
           content: JSON.stringify(convertToRaw(that.state.editorState.getCurrentContent())),
           inlineStyles: JSON.stringify(that.state.inlineStyles),
-          docId: that.props.document._id
+          docId: that.props.document._id,
+          selectionData: JSON.stringify(selectionData)
         });
       };
     });
@@ -102,30 +124,28 @@ export default class TextEditor extends React.Component {
       that.onChange = (editorState) => that.setState({editorState});
     });
     socket.on('editorChange', function(data) {
-      console.log('The EditorChange data is: ', data);
-      if (data.inlineStyles){
-        that.setState({
-          editorState: EditorState.createWithContent(convertFromRaw(JSON.parse(data.content))),
-          inlineStyles: JSON.parse(data.inlineStyles),
-        });
-      }
-      else {
-        that.setState({
-          editorState: EditorState.createWithContent(convertFromRaw(JSON.parse(data.content))),
-        });
-      }
-    });
-  }
+      let currState = JSON.parse(data.content);
+      console.log(currState);
+      let selectionData = JSON.parse(data.selectionData);
+      console.log(selectionData);
 
-  _handleKeyCommand(command) {
-    console.log('handle key command called')
-    const {editorState} = this.state.editorState;
-    const newState = RichUtils.handleKeyCommand(editorState, command);
-    if (newState) {
-      this.onChange(newState);
-      return true;
-    }
-    return false;
+      if (selectionData.id !== that.state.user.id) {
+        if (selectionData.startKey === selectionData.endKey) {
+          currState.blocks.forEach((item) => {
+            if (String(item.key) === String(selectionData.startKey)) {
+              item.inlineStyleRanges.push({offset: selectionData.startOffset, length: (selectionData.endOffset - selectionData.startOffset), style: "SELECTED"})
+            }
+          });
+        }
+      }
+
+      console.log('The EditorChange data is: ', currState);
+
+      that.setState({
+        editorState: EditorState.createWithContent(convertFromRaw(currState)),
+        inlineStyles: JSON.parse(data.inlineStyles),
+      });
+    });
   }
 
   _onTab(e) {
@@ -212,6 +232,7 @@ export default class TextEditor extends React.Component {
     e.preventDefault();
     let c = convertToRaw(this.state.editorState.getCurrentContent());
     console.log(c);
+    console.log("id: ", id);
     fetch(url + '/save/document', {
      method: 'POST',
      credentials: "same-origin",
@@ -221,7 +242,7 @@ export default class TextEditor extends React.Component {
      body: JSON.stringify({
        content: JSON.stringify(convertToRaw(this.state.editorState.getCurrentContent())),
        inlineStyles: JSON.stringify(this.state.inlineStyles),
-       id: id
+       id: String(id)
      })
    })
    .then((res) => {console.log(res); if(res.status !== 200) {
@@ -282,7 +303,6 @@ export default class TextEditor extends React.Component {
           customStyleMap={this.state.inlineStyles}
           blockRenderMap={blockRenderMap}
           onTab={(e) => this.onTab(e)}
-          handleKeyCommand={(e) => this.handleKeyCommand(e)}
         />
       </div>
     </div>);

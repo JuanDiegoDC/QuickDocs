@@ -45,7 +45,7 @@ export default class LoginForm extends React.Component {
       console.log(resJson);
       if (resJson.success) {
         console.log("Success is true");
-        this.props.login(this.state.username);
+        this.props.login(resJson.user);
       }
     }).catch((err) => {
       console.log(err);
