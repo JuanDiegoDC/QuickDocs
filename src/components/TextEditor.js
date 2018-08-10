@@ -57,11 +57,13 @@ export default class TextEditor extends React.Component {
       textAlign: 'left',
     };
     this.focus = () => this.refs.editor.focus()
-    this.onChange = (editorState) => this.setState({editorState});
+
     this.updateEditorState = editorState => this.setState({ editorState });
   }
 
+
   componentDidMount() {
+    this.onChange = (editorState) => this.setState({editorState});
     console.log(this.props.document);
     if (this.props.document.content || this.props.inlineStyles) {
       console.log("Component did mount log: ", this.props.document);
@@ -71,18 +73,30 @@ export default class TextEditor extends React.Component {
       });
     }
     const socket = io(url);
+    let that = this;
     socket.on('connect', function() {
       console.log('ws connect')
+      socket.emit('join', { docId: that.props.document._id });
+      that.onChange = (editorState) => {
+        that.setState({editorState}); 
+        console.log('New Editor State!')};
     });
     socket.on('disconnect', function() {
       console.log('ws disconnect')
+      socket.emit('leave', {docId: that.props.document._id })
+      that.onChange = (editorState) => that.setState({editorState});
     });
-    socket.on('msg', function(data) {
-      console.log('ws msg:', data);
-      socket.emit('cmd', {foo: 123})
+    socket.on('editorChange', function(data) {
+      console.log('The EditorChange data is: ', data);
+      that.setState({
+        editorState: EditorState.createWithContent(convertFromRaw(JSON.parse(data.document.content))),
+        inlineStyles: JSON.parse(data.document.inlineStyles),
+      });
+
     });
-    socket.emit('joinRoom', { docId: this.props.document._id, user: this.props.user });
   }
+
+
 
   toggleFontSize = fontSize => {
     this.setState({
@@ -209,7 +223,7 @@ export default class TextEditor extends React.Component {
 
     return (
       <div>
-      <HeaderEditor goBack={(e)=>this.props.goBack(e)} saveDocument={(e) => this.saveDocument(e, this.props.document._id)} editToggle={() => this.props.editToggle()} title={this.props.document.title} />
+      <HeaderEditor goBack={(e)=>this.props.goBack(e)} saveDocument={(e) => this.saveDocument(e, this.props.document._id)} editToggle={() => this.props.editToggle()} document={this.props.document} />
       <div id="buttonWrapper">
         <Button variant="outlined" style={{fontWeight: "bold"}} onMouseDown={(e) => this._onBoldClick(e)}>BOLD</Button>
         <Button variant="outlined" style={{fontStyle: "italic"}} onMouseDown={(e) => this._onItalicClick(e)}>ITALIC</Button>
