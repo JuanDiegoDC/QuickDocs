@@ -68,7 +68,8 @@ class DocumentPortal extends React.Component {
     });
   }
 
-  deleteDocument(id){
+  deleteDocument(e, id){
+    e.preventDefault();
     fetch(url + '/delete/document/' + String(id), {
       method: 'GET',
       credentials: "same-origin",
@@ -89,6 +90,7 @@ class DocumentPortal extends React.Component {
       }
     }).then(() => {
       this.getDocuments();
+      this.dialogDeleteClose();
     })
     .catch((err) => {
       console.log(err);
@@ -379,7 +381,7 @@ class DocumentPortal extends React.Component {
                                 The document and its contents will be erased.
                               </DialogContentText>
                                 <DialogActions>
-                                  <Button color="primary" onClick={(e)=>this.dialogDeleteClose(e)}>
+                                  <Button color="primary" onClick={(e)=>this.deleteDocument(e, n._id)}>
                                     Delete
                                   </Button>
                                   <Button color="primary" onClick={(e)=>this.dialogDeleteClose(e)}>
