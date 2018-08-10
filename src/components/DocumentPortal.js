@@ -16,7 +16,7 @@ import {
   DialogContentText,
   TextField
 } from '@material-ui/core';
-import Edit from '@material-ui/icons';
+import Delete from '@material-ui/icons/DeleteOutline';
 const url = "http://localhost:8080";
 import TextEditor from './TextEditor';
 
@@ -28,6 +28,7 @@ class DocumentPortal extends React.Component {
       isEditing: false,
       dialogOpen: false,
       dialogCreateOpen: false,
+      dialogDeleteOpen: false,
       editingDocument: null,
       user: this.props.user,
       docTitle: '',
@@ -271,6 +272,20 @@ class DocumentPortal extends React.Component {
     })
   }
 
+  dialogDeleteOpen(e){
+    e.preventDefault();
+    this.setState({
+      dialogDeleteOpen: true
+    });
+  }
+
+  dialogDeleteClose(e){
+    e.preventDefault();
+    this.setState({
+      dialogDeleteOpen: false
+    });
+  }
+
   render() {
     return (<div>
       {
@@ -283,13 +298,14 @@ class DocumentPortal extends React.Component {
             <Card style={{
                 margin: '20px'
               }}>
-              <div style={{maxHeight: '500px', overflow: 'auto'}}>
+              <div style={{maxHeight: '500px', maxWidth: '100%', overflow: 'auto'}}>
               <Table>
                 <TableHead>
                   <TableRow>
                     <TableCell>Title</TableCell>
                     <TableCell>Owner</TableCell>
                     <TableCell>Edit</TableCell>
+                    <TableCell>Delete</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -319,6 +335,30 @@ class DocumentPortal extends React.Component {
                                   Submit
                                 </Button>
                               </DialogActions>
+                            </Dialog>
+                        </TableCell>
+                        <TableCell>
+                          <Button onClick={(e)=>this.dialogDeleteOpen(e)} variant="extendedFab"><Delete /></Button>
+                            <Dialog
+                              open={this.state.dialogDeleteOpen}
+                              aria-labelledby="alert-dialog-title"
+                              aria-describedby="alert-dialog-description"
+                              fullWidth
+                              >
+                              <DialogTitle id="alert-dialog-title">
+                                {"Delete this document?"}
+                              </DialogTitle>
+                              <DialogContentText id="alert-dialog-description" style={{marginLeft: '25px'}}>
+                                The document and its contents will be erased.
+                              </DialogContentText>
+                                <DialogActions>
+                                  <Button color="primary" onClick={(e)=>this.dialogDeleteClose(e)}>
+                                    Delete
+                                  </Button>
+                                  <Button color="primary" onClick={(e)=>this.dialogDeleteClose(e)}>
+                                    Cancel
+                                  </Button>
+                                </DialogActions>
                             </Dialog>
                         </TableCell>
                       </TableRow>);

@@ -104,7 +104,8 @@ export default class TextEditor extends React.Component {
   }
 
   _handleKeyCommand(command) {
-    const {editorState} = this.state;
+    console.log('handle key command called')
+    const {editorState} = this.state.editorState;
     const newState = RichUtils.handleKeyCommand(editorState, command);
     if (newState) {
       this.onChange(newState);
@@ -259,7 +260,7 @@ export default class TextEditor extends React.Component {
       <div>
         {this.state.showColorPicker ? <div style={{position: "absolute", left: "275px"}}><GithubPicker colors={colors} onChange={(color, e) => this.handleColorChange(color, e)}/></div> : <div></div>}
       </div>
-      <div style={editorStyle}>
+      <div style={editorStyle} onClick={this.focus}>
         <Editor
           ref='editor'
           editorState={this.state.editorState}
@@ -267,6 +268,7 @@ export default class TextEditor extends React.Component {
           customStyleMap={this.state.inlineStyles}
           blockRenderMap={blockRenderMap}
           onTab={(e) => this.onTab(e)}
+          handleKeyCommand={(e) => this.handleKeyCommand(e)}
         />
       </div>
     </div>);
