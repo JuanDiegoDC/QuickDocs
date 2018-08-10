@@ -9,6 +9,10 @@ class HeaderEditor extends React.Component {
     super(props)
   }
 
+  componentDidMount(){
+    console.log(this.props)
+  }
+
   render(){
     return(
       <div>
@@ -18,7 +22,7 @@ class HeaderEditor extends React.Component {
             <MenuIcon />
           </IconButton>
           <Typography variant="title" color="inherit">
-            {this.props.title || "Untitled"}
+            {this.props.title}
           </Typography>
           <div style={{position: "absolute", right: 0}}>
           <Button onClick={(e) => this.props.saveDocument(e)} color="inherit" style={{marginLeft: "150px"}}>

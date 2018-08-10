@@ -130,11 +130,10 @@ class DocumentPortal extends React.Component {
       console.log(resJson);
       if (resJson.success) {
         console.log("Finished creating document");
-        this.setState({editingDocument: resJson})
-      } else {
-        console.log("Did not create document");
-      }
-    }).then(() => {
+        } else {
+          console.log("Did not create document");
+        }
+      }).then(() => {
       fetch(url + '/documents', {
         method: 'GET',
         credentials: "same-origin",
@@ -152,9 +151,20 @@ class DocumentPortal extends React.Component {
         console.log(resJson);
         if (resJson.success) {
           console.log("Finished getting document from database", resJson);
-          this.setState({documents: resJson.docs});
-          let event = null;
-          this.editDocument(event, resJson.id)
+          let editDoc = {};
+          resJson.docs.forEach((doc) => {
+            if (String(doc._id) === String(resJson.id)){
+              editDoc = doc;
+            }
+          })
+          this.setState({
+            documents: resJson.docs,
+            editingDocument: editDoc
+          }, () => {
+            this.setState({
+              isEditing: true
+            });
+          });
         }
       })
     }).catch((err) => {
@@ -162,7 +172,7 @@ class DocumentPortal extends React.Component {
     })
   }
 
-  editDocument(id) {
+  editDocument(e, id) {
     this.state.documents.forEach((item) => {
       if (item._id === id) {
         this.setState({
@@ -212,7 +222,7 @@ class DocumentPortal extends React.Component {
     .then((resJson) => {
       if (resJson.success) {
         this.dialogClose();
-        this.editDocument(this.state.requestDocId);
+        this.editDocument(e, this.state.requestDocId);
         this.setState({
           requestDocId: ""
         });
@@ -246,7 +256,7 @@ class DocumentPortal extends React.Component {
       if (resJson.success){
         if (resJson.access) {
           console.log('Granted access to document!')
-          this.editDocument(docId);
+          this.editDocument(e, docId);
         } else{
           this.dialogOpen(docId);
         }
