@@ -354,10 +354,10 @@ class DocumentPortal extends React.Component {
                           <Button onClick={(e) => this.requestAccess(e, n._id)} variant="extendedFab">Edit</Button>
                             <Dialog title="Dialog With Actions" open={this.state.dialogOpen}>
                               <DialogTitle id="form-dialog-title">
-                                Access (document name)</DialogTitle>
+                                Access the Document</DialogTitle>
                               <DialogContent>
                                 <DialogContentText>
-                                  Please enter (insert document name here)'s password:
+                                  Please enter the Document's password.
                                 </DialogContentText>
                                 <TextField autoFocus margin="dense" id="docPassword" label="Password" type="password" onChange={(e)=>this.changeDocPass(e)} fullWidth/>
                               </DialogContent>
