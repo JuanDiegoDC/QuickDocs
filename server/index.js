@@ -385,7 +385,7 @@ function(req, res, next) {
       documents.forEach((docId) => {
         if (docId === data.docId) {
           socket.leave(data.docId);
-          console.log('Left room.');
+          console.log('\nLeft room.\n');
         }
       })
     })
